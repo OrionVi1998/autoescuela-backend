@@ -1,4 +1,25 @@
 
+class ContenedorAlumnos {
+    alumnos;
+
+    constructor() {
+        this.alumnos = []
+    }
+
+    getAlumnos() {
+        return this.alumnos
+    }
+
+    crearAlumno(nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClasesRestantes) {
+        let alumno_nuevo = new Alumno(
+
+        )
+    }
+
+    eliminarAlumno() {}
+
+}
+
 class Alumno {
     id_alumno;
     nombre;
@@ -18,10 +39,8 @@ class Alumno {
         this.cantHorasClasesRestantes = cantHorasClasesRestantes;
     }
 
-    getAlumno() {}
-    crearAlumno() {}
+
     editarAlumno() {}
-    eliminarAlumno() {}
 
     asociarPaquete() {}
 
@@ -34,8 +53,5 @@ class Alumno {
         this.cantClasesRestantes += 1
         this.cantHorasClasesRestantes += duracionClase
     }
-
-
 }
 
-export default Alumno

@@ -1,5 +1,5 @@
 
-import Usuario from "./Usuario"
+const Usuario = require("./Usuario")
 
 
 class Profesor extends Usuario {
@@ -62,4 +62,4 @@ class Profesor extends Usuario {
     }
 }
 
-export default Profesor
+module.exports = Profesor
