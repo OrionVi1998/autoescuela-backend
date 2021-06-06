@@ -2,10 +2,10 @@
 class Turno {
 
     id_turno;
+    alumno_id;
+    usuario_id;
     horaInicio;
     horaFin;
-    usuario_id;
-    alumno_id;
 
     constructor(id_turno, horaInicio, horaFin, usuario, alumno) {
         this.id_turno = id_turno

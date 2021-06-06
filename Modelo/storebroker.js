@@ -267,13 +267,34 @@ class Storebroker {
         }
     }
 
-    static async editarTurno() {
+    static async editarTurno(turno) {
+        let conn;
+        try {
+            conn = await pool.getConnection();
+            const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, horaInicio=?, horaFin=? WHERE ID_TURNO=?",
+                [turno.alumno_id, turno.usuario_id, turno.horaInicio, turno.horaFin, turno.id_turno]);
+            console.log(rows); // FIXME
 
-
-
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.end;
+        }
     }
 
-    static async eliminarTurno() {
+    static async eliminarTurno(turno) {
+        let conn;
+        try {
+            conn = await pool.getConnection();
+            const rows = await conn.query("DELETE FROM turnos WHERE ID_TURNO=?",
+                [turno.id_turno]);
+            console.log(rows); // FIXME
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.end;
+        }
     }
 }
 
@@ -332,10 +353,19 @@ let pag = new Pago(
 // Storebroker.editarPago(pag)
 //Storebroker.eliminarPago(pag)
 
-let Turno = new Turno(
-
+let t = new Turno(
+    2,
+    "10:00:00",
+    "23:00:00",
+    4,
+    2
 )
 
+// Storebroker.crearTurno(t)
+// Storebroker.editarTurno(t)
+// Storebroker.eliminarTurno(t)
+
+// Storebroker.getPagos()
 
 // Storebroker.eliminarAlumno(a)
 
