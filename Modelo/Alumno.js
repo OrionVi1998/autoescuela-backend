@@ -10,7 +10,7 @@ class ContenedorAlumnos {
         return this.alumnos
     }
 
-    crearAlumno(nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClasesRestantes) {
+    crearAlumno(nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) {
         let alumno_nuevo = new Alumno(
 
         )
@@ -27,16 +27,16 @@ class Alumno {
     telefono;
     direccion;
     cantClasesRestantes;
-    cantHorasClasesRestantes;
+    cantHorasClaseRestantes;
 
-    constructor(id_alumno, nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClasesRestantes) {
+    constructor(id_alumno, nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) {
         this.id_alumno = id_alumno;
         this.nombre = nombre;
         this.apellido = apellido;
         this.telefono = telefono;
         this.direccion = direccion;
         this.cantClasesRestantes = cantClasesRestantes;
-        this.cantHorasClasesRestantes = cantHorasClasesRestantes;
+        this.cantHorasClaseRestantes = cantHorasClaseRestantes;
     }
 
 
@@ -46,12 +46,14 @@ class Alumno {
 
     usarClase(duracionClase) {
         this.cantClasesRestantes -= 1
-        this.cantHorasClasesRestantes -= duracionClase
+        this.cantHorasClaseRestantes -= duracionClase
     }
 
     devolverClase(duracionClase) {
         this.cantClasesRestantes += 1
-        this.cantHorasClasesRestantes += duracionClase
+        this.cantHorasClaseRestantes += duracionClase
     }
 }
+
+module.exports = {Alumno, ContenedorAlumnos}
 

@@ -31,4 +31,4 @@ class Paquete {
 
 }
 
-export default Paquete
+module.exports = Paquete

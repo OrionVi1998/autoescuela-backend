@@ -33,4 +33,4 @@ class Pago {
 
 }
 
-export default Pago
+module.exports = Pago

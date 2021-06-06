@@ -4,15 +4,15 @@ class Turno {
     id_turno;
     horaInicio;
     horaFin;
-    usuario;
-    alumno;
+    usuario_id;
+    alumno_id;
 
     constructor(id_turno, horaInicio, horaFin, usuario, alumno) {
         this.id_turno = id_turno
         this.horaInicio = horaInicio
         this.horaFin = horaFin
-        this.usuario = usuario
-        this.alumno = alumno
+        this.usuario_id = usuario
+        this.alumno_id = alumno
     }
 
     getTurno() {
@@ -35,4 +35,4 @@ class Turno {
 
 }
 
-export default Turno
+module.exports = Turno
