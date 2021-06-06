@@ -1,5 +1,6 @@
 const Profesor = require("./Profesor");
-
+const {Alumno} = require("./Alumno")
+const config = require("./config.json");
 const mariadb = require("mariadb")
 const pool = mariadb.createPool()
 
@@ -58,16 +59,54 @@ class Storebroker {
 
     }
 
-    static async eliminarProfesor() {
+    static async eliminarProfesor(profesor) {
+        let conn;
+        try {
+            conn = await pool.getConnection(); // 1 = administrador & 0 = profesores
+            const rows = await conn.query("DELETE FROM usuarios WHERE (ID_USUARIO=? AND credencial=0)",
+                [profesor.id_usuario]);
+            console.log(rows); // FIXME
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.end;
+        }
     }
 
-    static async crearAlumnos() {
+    static async crearAlumno(alumno) {
+        let conn;
+        try {
+            conn = await pool.getConnection(); // 1 = administrador & 0 = profesores
+            const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
+                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes]);
+            console.log(rows); // FIXME
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.end;
+        }
     }
 
-    static async editarAlumnos() {
+    static async editarAlumno(alumno) {
+
+        let conn;
+        try {
+            conn = await pool.getConnection(); // 1 = administrador & 0 = profesores
+            const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
+                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes]);
+            console.log(rows); // FIXME
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.end;
+        }
+
     }
 
-    static async eliminarAlumnos() {
+    static async eliminarAlumno() {
     }
 
     static async crearPaquete() {
@@ -88,13 +127,13 @@ class Storebroker {
     static async eliminarPago() {
     }
 
-    static async crearTurnos() {
+    static async crearTurno() {
     }
 
-    static async editarTurnos() {
+    static async editarTurno() {
     }
 
-    static async eliminarTurnos() {
+    static async eliminarTurno() {
     }
 }
 
@@ -112,7 +151,21 @@ let p = new Profesor(
     "20:10:30"
 )
 
-Storebroker.editarProfesor(p)
+let a = new Alumno(
+    1,
+    "alfy",
+    "Bartolome",
+    911,
+    "Atico de la torre",
+    1,
+    2,
+)
 
+
+// Storebroker.crearAlumno(a)
+
+// Storebroker.crearProfesor(p)
+// Storebroker.editarProfesor(p)
+//Storebroker.eliminarProfesor(p)
 
 module.exports = Storebroker

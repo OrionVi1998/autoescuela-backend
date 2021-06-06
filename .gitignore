@@ -3,4 +3,4 @@
 # dependencies
 /node_modules
 /.idea
-/Modelo/.env
+/Modelo/config.json
