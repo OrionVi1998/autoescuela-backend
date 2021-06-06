@@ -252,6 +252,20 @@ class Storebroker {
         }
     }
 
+    static async getTurnos() {
+        let conn;
+        try {
+            conn = await pool.getConnection();
+            const rows = await conn.query("SELECT * FROM turnos");
+            console.log(rows); // FIXME
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) return conn.end;
+        }
+    }
+
     static async crearTurno(turno) {
         let conn;
         try {
