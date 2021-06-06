@@ -5,7 +5,7 @@ const Pago = require("./Pago")
 const Turno = require("./Turno")
 const config = require("./config.json");
 const mariadb = require("mariadb")
-const pool = mariadb.createPool()
+const pool = mariadb.createPool(config)
 
 
 class Storebroker {
@@ -312,7 +312,8 @@ class Storebroker {
     }
 }
 
-// Storebroker.getProfesores()
+//Storebroker.getProfesores()
+
 
 let p = new Profesor(
     3,
@@ -320,7 +321,7 @@ let p = new Profesor(
     0,
     "Langosta",
     "Luna",
-    666666666,
+    777777777777777,
     "Somalia 321",
     "08:00:00",
     "20:10:30"
