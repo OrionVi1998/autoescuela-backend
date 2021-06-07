@@ -1,4 +1,9 @@
 
+class ContenedorTurnos {
+
+}
+
+
 class Turno {
 
     id_turno;
@@ -35,4 +40,4 @@ class Turno {
 
 }
 
-module.exports = Turno
+module.exports = {Turno, ContenedorTurnos}

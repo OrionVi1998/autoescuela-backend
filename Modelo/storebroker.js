@@ -1,8 +1,5 @@
-const Profesor = require("./Profesor");
-const {Alumno} = require("./Alumno")
-const Paquete = require("./Paquete")
-const Pago = require("./Pago")
-const Turno = require("./Turno")
+
+// const {Paquete} = require("./Paquete")
 const config = require("./config.json");
 const mariadb = require("mariadb")
 const pool = mariadb.createPool(config)
@@ -87,7 +84,7 @@ class Storebroker {
         }
 
 
-    } //TODO
+    }
 
     static async crearAlumno(alumno) {
         let conn;
@@ -139,12 +136,15 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM paquetes");
-            console.log(rows); // FIXME
+
+            let paquetes_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+
+            return paquetes_retorno
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -154,13 +154,17 @@ class Storebroker {
             conn = await pool.getConnection();
             // usar esto en PostgreSQL INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id;
             const rows = await conn.query("INSERT INTO paquetes (nombre, cantClases, duracionClases, precio, estado) VALUES (?, ?, ?, ?, 1)",
-                [paquete.nombre, paquete.cantClases, paquete.duracionClase, paquete.precio]);
-            console.log(rows); // FIXME
+                [paquete.nombre, paquete.cantClases, paquete.duracionClases, paquete.precio]);
+            // console.log(rows);
+
+            let last_id = await conn.query("SELECT LAST_INSERT_ID()");
+            // console.log(last_id)
+            return last_id[0]["LAST_INSERT_ID()"];
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -175,7 +179,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -190,7 +194,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -313,80 +317,15 @@ class Storebroker {
     }
 }
 
-//Storebroker.getProfesores()
-
-
-let p = new Profesor(
-    3,
-    "presidenta@somalia.haha",
-    0,
-    "Langosta",
-    "Luna",
-    777777777777777,
-    "Somalia 321",
-    "08:00:00",
-    "20:10:30"
-)
-
-let a = new Alumno(
-    2,
-    "alfy",
-    "Laguirre",
-    911,
-    "Sotano de la torre",
-    1,
-    2,
-)
-
-
-let pack = new Paquete(
-    1,
-    "Paquete primero",
-    3,
-    1,
-    666,
-    1
-)
-
-
-// Storebroker.getPaquete()
-// Storebroker.crearPaquete(pack)
-// Storebroker.editarPaquete(pack)
-// Storebroker.eliminarPaquete(pack)
-
-
-let pag = new Pago(
-    1,
-    2,
-    1,
-    432,
-    "2021-10-24",
-    0
-)
-
-// Storebroker.getPagos()
-// Storebroker.crearPago(pag)
-// Storebroker.editarPago(pag)
-//Storebroker.eliminarPago(pag)
-
-let t = new Turno(
-    2,
-    "10:00:00",
-    "23:00:00",
-    4,
-    2
-)
-
-// Storebroker.crearTurno(t)
-// Storebroker.editarTurno(t)
-// Storebroker.eliminarTurno(t)
-
-// Storebroker.getPagos()
-
-// Storebroker.eliminarAlumno(a)
-
-// Storebroker.crearProfesor(p)
-// Storebroker.editarProfesor(p)
-//Storebroker.eliminarProfesor(p)
+// let p = new Paquete(
+//     1,
+//     "Tercer paquete",
+//     3,
+//     1,
+//     27,
+//     0
+// )
+//
+// Storebroker.crearPaquete(p)
 
 module.exports = Storebroker

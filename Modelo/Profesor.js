@@ -1,6 +1,10 @@
 
 const Usuario = require("./Usuario")
 
+class ContenedorProfesor {
+
+}
+
 
 class Profesor extends Usuario {
     nombre;

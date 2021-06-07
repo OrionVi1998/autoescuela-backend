@@ -1,4 +1,8 @@
 
+class ContenedorPagos {
+
+}
+
 class Pago {
     id_pago;
     alumno_id;
@@ -33,4 +37,4 @@ class Pago {
 
 }
 
-module.exports = Pago
+module.exports = {Pago, ContenedorPagos}
