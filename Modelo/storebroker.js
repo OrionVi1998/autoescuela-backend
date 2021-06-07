@@ -152,6 +152,7 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
+            // usar esto en PostgreSQL INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id;
             const rows = await conn.query("INSERT INTO paquetes (nombre, cantClases, duracionClases, precio, estado) VALUES (?, ?, ?, ?, 1)",
                 [paquete.nombre, paquete.cantClases, paquete.duracionClase, paquete.precio]);
             console.log(rows); // FIXME
