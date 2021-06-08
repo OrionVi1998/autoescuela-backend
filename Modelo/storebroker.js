@@ -285,8 +285,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, horaInicio, horaFin) VALUES (?, ?, ?, ?)",
-                [turno.alumno_id, turno.usuario_id, turno.horaInicio, turno.horaFin]);
+            const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, fechaHoraInicio, fechaHoraFin) VALUES (?, ?, ?, ?)",
+                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin]);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
@@ -304,8 +304,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, horaInicio=?, horaFin=? WHERE ID_TURNO=?",
-                [turno.alumno_id, turno.usuario_id, turno.horaInicio, turno.horaFin, turno.id_turno]);
+            const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, fechaHoraInicio=?, fechaHoraFin=? WHERE ID_TURNO=?",
+                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.id_turno]);
             console.log(rows); // TODO
 
         } catch (err) {

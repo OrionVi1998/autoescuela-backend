@@ -21,8 +21,8 @@ class ContenedorTurnos {
                     t.ID_TURNO,
                     t.ALUMNO_ID,
                     t.USUARIO_ID,
-                    t.horaInicio,
-                    t.horaFin
+                    t.fechaHoraInicio,
+                    t.fechaHoraFin
                )
             })
             return new ContenedorTurnos(async_result)
@@ -36,14 +36,14 @@ class ContenedorTurnos {
         return this.turnos
     }
 
-    crearTurno(alumno_id, usuario_id, horaInicio, horaFin) {
+    crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin) {
 
         let tur = new Turno(
             500,
             alumno_id,
             usuario_id,
-            horaInicio,
-            horaFin
+            fechaHoraInicio,
+            fechaHoraFin
         );
 
         Storebroker.crearTurno(tur).then(r => {
@@ -82,15 +82,15 @@ class Turno {
     id_turno;
     alumno_id;
     usuario_id;
-    horaInicio;
-    horaFin;
+    fechaHoraInicio;
+    fechaHoraFin;
 
-    constructor(id_turno, alumno_id, usuario_id, horaInicio, horaFin) {
+    constructor(id_turno, alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin) {
         this.id_turno = id_turno
         this.alumno_id = alumno_id
         this.usuario_id = usuario_id
-        this.horaInicio = horaInicio
-        this.horaFin = horaFin
+        this.fechaHoraInicio = fechaHoraInicio
+        this.fechaHoraFin = fechaHoraFin
     }
 
     /*
@@ -125,7 +125,7 @@ let tr = new Turno(
 
 ContenedorTurnos.build().then(ct => {
     console.log(ct)
-    // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.horaInicio, tr.horaFin)
+    // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
     // ct.editarTurno(tr)
     // ct.eliminarTurno(tr)
     console.log(ct)
