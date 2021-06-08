@@ -35,7 +35,6 @@ class ContenedorProfesor {
         } catch (err) {
             throw err
         }
-
     }
 
     getProfesores() {
@@ -102,11 +101,17 @@ class Profesor extends Usuario {
         this.apellido = apellido
         this.telefono = telefono
         this.direccion = direccion
+
+        horaInicio = horaInicio.split(":")
+        horaFin = horaFin.split(":")
+
+        horaInicio = new Date(1,1,1,Number(horaInicio[0]), Number(horaInicio[1]), Number(horaInicio[2]))
+        horaFin = new Date(1,1,1,Number(horaFin[0]), Number(horaFin[1]), Number(horaFin[2]))
+
+
         this.horaInicio = horaInicio
         this.horaFin = horaFin
 
-        // new Date(year, monthIndex, day, hours, minutes, seconds, milliseconds)
-        // this.horaInicio = new Date(2021, 1, 1, 8, 30, 0, 0)
 
     }
 
@@ -128,5 +133,12 @@ class Profesor extends Usuario {
         }
     }
 }
+
+
+ContenedorProfesor.build().then(cp => {
+    // console.log(cp.profesores)
+
+
+})
 
 module.exports = {Profesor, ContenedorProfesor}

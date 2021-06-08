@@ -5,6 +5,22 @@ const pool = mariadb.createPool(config);
 
 class Storebroker {
 
+    static async getAdministradores() {
+        let conn;
+        try {
+            conn = await pool.getConnection(); // 1 = administrador & 0 = profesores
+            const rows = await conn.query("SELECT * FROM usuarios WHERE usuarios.credencial = 1;");
+
+            // console.log(rows)
+            return rows.slice(0, rows.length)
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) await conn.end;
+        }
+    }
+
     static async getProfesores() {
         let conn;
         try {

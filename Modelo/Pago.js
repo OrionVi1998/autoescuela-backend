@@ -34,7 +34,6 @@ class ContenedorPagos {
     }
 
     getPagos() {
-
         return this.pagos;
     }
 
@@ -75,16 +74,9 @@ class ContenedorPagos {
         });
     }
 
-    registrarPago() {
-        this.pagado = !this.pagado;
-    }
-
-
     eliminarPago(pago) {
-
         Storebroker.eliminarPago(pago);
         this.pagos = this.pagos.filter(p => p.id_pago !== pago.id_pago)
-
     }
 
     pagosPendientes(){
@@ -109,6 +101,10 @@ class Pago {
         this.monto = monto
         this.fechaRealizada = fechaRealizada
         this.pagado = pagado
+    }
+
+    registrarPago() {
+        this.pagado = !this.pagado;
     }
 
 }

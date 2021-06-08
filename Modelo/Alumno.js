@@ -74,6 +74,11 @@ class ContenedorAlumnos {
         this.alumnos = this.alumnos.filter(a => a.id_alumno !== a.id_alumno)
     }
 
+    getAlumno(id_alumno) {
+        return this.alumnos.find(a => a.id_alumno === id_alumno)
+    }
+
+
 }
 
 class Alumno {
@@ -97,7 +102,7 @@ class Alumno {
 
 
 
-    asociarPaquete() {
+    asociarPaquete(id_paquete) {
 
 
 
@@ -113,6 +118,12 @@ class Alumno {
         this.cantHorasClaseRestantes += duracionClase
     }
 }
+
+// ContenedorAlumnos.build().then((ca) => {
+//     console.log(ca)
+//     console.log(ca.getAlumno(2))
+// })
+
 
 module.exports = {Alumno, ContenedorAlumnos}
 
