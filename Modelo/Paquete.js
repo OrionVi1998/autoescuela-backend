@@ -36,6 +36,11 @@ class ContenedorPaquete {
         return this.paquetes
     }
 
+    getPaquetesVisibles() {
+        return this.paquetes.filter(p => p.estado === 1)
+    }
+
+
     crearPaquete(nombre, cantClases, duracionClases, precio, estado) {
 
         let paq = new Paquete(

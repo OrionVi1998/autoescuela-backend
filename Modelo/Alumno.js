@@ -97,7 +97,11 @@ class Alumno {
 
 
 
-    asociarPaquete() {}
+    asociarPaquete() {
+
+
+
+    }
 
     usarClase(duracionClase) {
         this.cantClasesRestantes -= 1

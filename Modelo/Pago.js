@@ -76,7 +76,6 @@ class ContenedorPagos {
     }
 
     registrarPago() {
-
         this.pagado = !this.pagado;
     }
 
