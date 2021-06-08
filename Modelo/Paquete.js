@@ -5,7 +5,6 @@ class ContenedorPaquete {
     paquetes;
 
     constructor(paquetes) {
-        // TODO: agregar constructor para un objeto desde la BD
         if (typeof paquetes === 'undefined') {
             console.log("Parametro de constructor indefinido")
         } else {
@@ -82,8 +81,6 @@ class ContenedorPaquete {
             }
         );
     }
-
-
 }
 
 class Paquete {
@@ -107,10 +104,6 @@ class Paquete {
 }
 
 
-ContenedorPaquete.build().then(cp => {
-    console.log(cp)
-    cp.crearPaquete("Quinto Paquete", 3, 1, 2700, 1)
-})
 
 
 module.exports = {Paquete, ContenedorPaquete}
