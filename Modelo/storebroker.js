@@ -1,5 +1,4 @@
 
-// const {Paquete} = require("./Paquete")
 const config = require("./config.json");
 const mariadb = require("mariadb")
 const pool = mariadb.createPool(config)
@@ -12,12 +11,14 @@ class Storebroker {
         try {
             conn = await pool.getConnection(); // 1 = administrador & 0 = profesores
             const rows = await conn.query("SELECT * FROM usuarios WHERE usuarios.credencial = 0;");
-            console.log(rows); // FIXME
+
+            // console.log(rows)
+            return rows.slice(0, rows.length)
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -29,12 +30,15 @@ class Storebroker {
             const rows = await conn.query(
                 `INSERT INTO usuarios (email, credencial, nombre, apellido, telefono, direccion, horaInicio, horaFin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [profesor.email, 0, profesor.nombre, profesor.apellido, profesor.telefono, profesor.direccion, profesor.horaInicio, profesor.horaFin]);
-            console.log(rows); // FIXME
+
+            let last_id = await conn.query("SELECT LAST_INSERT_ID()");
+            // console.log(last_id)
+            return last_id[0]["LAST_INSERT_ID()"];
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -45,13 +49,13 @@ class Storebroker {
             // columnas: (email, credencial, nombre, apellido, telefono, direccion, horaInicio, horaFin)
             const rows = await conn.query("UPDATE usuarios SET email=?, credencial=?, nombre=?, apellido=?, telefono=?, direccion=?, horaInicio=?, horaFin=? WHERE ID_USUARIO=?",
                 [profesor.email, 0, profesor.nombre, profesor.apellido, profesor.telefono, profesor.direccion, profesor.horaInicio, profesor.horaFin, profesor.id_usuario]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -61,12 +65,12 @@ class Storebroker {
             conn = await pool.getConnection(); // 1 = administrador & 0 = profesores
             const rows = await conn.query("DELETE FROM usuarios WHERE (ID_USUARIO=? AND credencial=0)",
                 [profesor.id_usuario]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -75,12 +79,12 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM alumnos");
-            console.log(rows); // FIXME
+            return rows.slice(0, rows.length)
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
 
 
@@ -92,12 +96,15 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
                 [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
+            let last_id = await conn.query("SELECT LAST_INSERT_ID()");
+            // console.log(last_id)
+            return last_id[0]["LAST_INSERT_ID()"];
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -107,12 +114,12 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("UPDATE alumnos SET nombre=?, apellido=?, telefono=?, direccion=?, cantClasesRestantes=?, cantHorasClaseRestantes=? WHERE ID_ALUMNO=?",
                 [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes, alumno.id_alumno]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -122,12 +129,12 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("DELETE FROM alumnos WHERE ID_ALUMNO=?",
                 [alumno.id_alumno]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -174,7 +181,7 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, duracionClases=?, precio=?, estado=? WHERE ID_PAQUETE=?",
                 [paquete.nombre, paquete.cantClases, paquete.duracionClase, paquete.precio, paquete.estado, paquete.id_paquete]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
@@ -189,7 +196,7 @@ class Storebroker {
             conn = await pool.getConnection(); // 0 invisible wow 1 = visibles O-O
             const rows = await conn.query("UPDATE paquetes SET estado=0 WHERE ID_PAQUETE=?",
                 [paquete.id_paquete]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
@@ -203,12 +210,12 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM pagos");
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -218,12 +225,12 @@ class Storebroker {
             conn = await pool.getConnection(); // pagado = 1 // a pagar = 0
             const rows = await conn.query("INSERT INTO pagos (ALUMNO_ID, PAQUETE_ID, monto, fechaRealizado, pagado) VALUES (?, ?, ?, ?, ?)",
                 [pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -233,12 +240,12 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("UPDATE pagos SET ALUMNO_ID=?, PAQUETE_ID=?, monto=?, fechaRealizado=?, pagado=? WHERE ID_PAGO=?",
                 [pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado, pago.id_pago]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -248,12 +255,12 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("DELETE FROM pagos WHERE ID_PAGO=?",
                 [pago.id_pago]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -262,12 +269,12 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM turnos");
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -277,12 +284,12 @@ class Storebroker {
             conn = await pool.getConnection(); // pagado = 1 // a pagar = 0
             const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, horaInicio, horaFin) VALUES (?, ?, ?, ?)",
                 [turno.alumno_id, turno.usuario_id, turno.horaInicio, turno.horaFin]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -292,12 +299,12 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, horaInicio=?, horaFin=? WHERE ID_TURNO=?",
                 [turno.alumno_id, turno.usuario_id, turno.horaInicio, turno.horaFin, turno.id_turno]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 
@@ -307,25 +314,14 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("DELETE FROM turnos WHERE ID_TURNO=?",
                 [turno.id_turno]);
-            console.log(rows); // FIXME
+            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
         } finally {
-            if (conn) return conn.end;
+            if (conn) await conn.end;
         }
     }
 }
-
-// let p = new Paquete(
-//     1,
-//     "Tercer paquete",
-//     3,
-//     1,
-//     27,
-//     0
-// )
-//
-// Storebroker.crearPaquete(p)
 
 module.exports = Storebroker
