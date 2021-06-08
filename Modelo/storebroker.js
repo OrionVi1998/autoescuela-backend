@@ -209,7 +209,28 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM pagos");
-            console.log(rows); // TODO
+
+            let pagos_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+
+            return pagos_retorno
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) await conn.end;
+        }
+    }
+
+
+    static async getPagosPendientes() {
+        let conn;
+        try {
+            conn = await pool.getConnection();
+            const rows = await conn.query("SELECT * FROM pagos WHERE pagado = 0");
+
+            let pagos_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+
+            return pagos_retorno
 
         } catch (err) {
             throw err;
@@ -224,7 +245,9 @@ class Storebroker {
             conn = await pool.getConnection(); // pagado = 1 // a pagar = 0
             const rows = await conn.query("INSERT INTO pagos (ALUMNO_ID, PAQUETE_ID, monto, fechaRealizado, pagado) VALUES (?, ?, ?, ?, ?)",
                 [pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado]);
-            console.log(rows); // TODO
+
+            let last_id = await conn.query("SELECT LAST_INSERT_ID()");
+            return last_id[0]["LAST_INSERT_ID()"];
 
         } catch (err) {
             throw err;
@@ -239,7 +262,6 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("UPDATE pagos SET ALUMNO_ID=?, PAQUETE_ID=?, monto=?, fechaRealizado=?, pagado=? WHERE ID_PAGO=?",
                 [pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado, pago.id_pago]);
-            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
@@ -254,7 +276,6 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("DELETE FROM pagos WHERE ID_PAGO=?",
                 [pago.id_pago]);
-            console.log(rows); // TODO
 
         } catch (err) {
             throw err;
