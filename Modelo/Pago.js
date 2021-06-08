@@ -88,8 +88,7 @@ class ContenedorPagos {
     }
 
     pagosPendientes(){
-
-        Storebroker.getPagosPendientes();
+        return this.pagos.filter(p => p.pagado === 0)
     }
 }
 
@@ -122,6 +121,7 @@ ContenedorPagos.build().then(cp => {
     //cp.getPagos();
     //cp.modificarPago(pago);
     //cp.eliminarPago(pago);
+    //cp.pagosPendientes();
 
 });
 

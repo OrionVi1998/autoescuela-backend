@@ -222,23 +222,6 @@ class Storebroker {
     }
 
 
-    static async getPagosPendientes() {
-        let conn;
-        try {
-            conn = await pool.getConnection();
-            const rows = await conn.query("SELECT * FROM pagos WHERE pagado = 0");
-
-            let pagos_retorno = rows.slice(0,rows.length) // sacamos las rows de META
-
-            return pagos_retorno
-
-        } catch (err) {
-            throw err;
-        } finally {
-            if (conn) await conn.end;
-        }
-    }
-
     static async crearPago(pago) {
         let conn;
         try {
