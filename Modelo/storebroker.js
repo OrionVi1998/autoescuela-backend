@@ -1,8 +1,7 @@
 
 const config = require("./config.json");
-const mariadb = require("mariadb")
-const pool = mariadb.createPool(config)
-
+const mariadb = require("mariadb");
+const pool = mariadb.createPool(config);
 
 class Storebroker {
 
@@ -269,7 +268,11 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM turnos");
-            console.log(rows); // TODO
+
+            let turnos_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+
+            return turnos_retorno
+
 
         } catch (err) {
             throw err;
@@ -281,10 +284,14 @@ class Storebroker {
     static async crearTurno(turno) {
         let conn;
         try {
-            conn = await pool.getConnection(); // pagado = 1 // a pagar = 0
+            conn = await pool.getConnection();
             const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, horaInicio, horaFin) VALUES (?, ?, ?, ?)",
                 [turno.alumno_id, turno.usuario_id, turno.horaInicio, turno.horaFin]);
-            console.log(rows); // TODO
+
+            let last_id = await conn.query("SELECT LAST_INSERT_ID()");
+            // console.log(last_id)
+            return last_id[0]["LAST_INSERT_ID()"];
+
 
         } catch (err) {
             throw err;
