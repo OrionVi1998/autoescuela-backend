@@ -6,7 +6,7 @@ class ContenedorPagos {
 
     constructor(pagos) {
 
-        if(typeof pagos === "undefined") {
+        if (typeof pagos === "undefined") {
             console.log("ERROR: Parametro del constructor NO definido\n");
         } else {
 
@@ -34,14 +34,12 @@ class ContenedorPagos {
     }
 
     getPagos() {
-
         return this.pagos;
     }
 
-    generarPago(alumno_id, paquete_id, monto, fechaRealizada, pagado) {
+    crearPago(alumno_id, paquete_id, monto, fechaRealizada, pagado) {
 
         let pago = new Pago(
-
             1000,
             alumno_id,
             paquete_id,
@@ -51,43 +49,36 @@ class ContenedorPagos {
         );
 
         Storebroker.crearPago(pago).then(r => {
-
             pago.id_pago = r
             this.pagos.push(pago)
             console.log(this.pagos)
         });
+    }
+
+    generarPagos(paquete, alumno) {
+
+        //Generar 3 pagos por paquete
 
     }
 
-    modificarPago(pago) {
 
+    editarPago(pago) {
         Storebroker.editarPago(pago);
-
         this.pagos = this.pagos.map(r => {
-
-            if(r.id_pago === pago.id_pago) {
-
+            if (r.id_pago === pago.id_pago) {
                 return pago;
             } else {
-
                 return r;
             }
         });
     }
 
-    registrarPago() {
-        this.pagado = !this.pagado;
-    }
-
-
     eliminarPago(pago) {
-
         Storebroker.eliminarPago(pago);
         this.pagos = this.pagos.filter(p => p.id_pago !== pago.id_pago)
-
     }
 
-    pagosPendientes(){
+    pagosPendientes() {
         return this.pagos.filter(p => p.pagado === 0)
     }
 }
@@ -111,18 +102,22 @@ class Pago {
         this.pagado = pagado
     }
 
+    registrarPago() {
+        this.pagado = !this.pagado;
+    }
+
 }
 
 let pago = new Pago(5, 2, 3, 300, "2021-12-25", 0);
 
-ContenedorPagos.build().then(cp => {
-    console.log(cp)
-    //cp.generarPago(pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado);
-    //cp.getPagos();
-    //cp.modificarPago(pago);
-    //cp.eliminarPago(pago);
-    //cp.pagosPendientes();
-
-});
+// ContenedorPagos.build().then(cp => {
+//     console.log(cp)
+//     //cp.generarPago(pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado);
+//     //cp.getPagos();
+//     //cp.modificarPago(pago);
+//     //cp.eliminarPago(pago);
+//     //cp.pagosPendientes();
+//
+// });
 
 module.exports = {Pago, ContenedorPagos}

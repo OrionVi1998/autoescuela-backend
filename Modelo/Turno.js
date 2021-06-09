@@ -2,7 +2,7 @@ const Storebroker = require('./storebroker')
 const Profesor = require('./Profesor')
 
 
-class ContenedorTurnos {
+class ContenedorTurno {
 
     turnos;
 
@@ -26,7 +26,8 @@ class ContenedorTurnos {
                     t.fechaHoraFin
                )
             })
-            return new ContenedorTurnos(async_result)
+
+            return new ContenedorTurno(async_result)
 
         } catch (err) {
             throw err
@@ -227,41 +228,17 @@ let tr = new Turno(
     "2021-06-08 08:30:00"
 )
 
+<<<<<<< HEAD
 
-let tr2 = new Turno(
-    9,
-    2,
-    4,
-    "2021-06-08 08:30:00",
-    "2021-06-08 09:30:00"
-)
-
-/*
-let prof = new Profesor(
-    400,
-    "profimaginario@gmail.com",
-    0,
-    "profesor",
-    "imaginario",
-    1538383838,
-    "Sin Direccion 123",
-    "08:00:00",
-    "20:00:00"
-)
-*/
-
-console.log(tr.verificarCompatHoraria(tr2))
+=======
+// ContenedorTurno.build().then(ct => {
+//     console.log(ct)
+//     // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
+//     // ct.editarTurno(tr)
+//     // ct.eliminarTurno(tr)
+//     console.log(ct)
+// })
+>>>>>>> e05d8065c50aa9f35a6bd8dac55218ec1b69f8ee
 
 
-/*
-ContenedorTurnos.build().then(ct => {
-    console.log(ct)
-    // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
-    // ct.editarTurno(tr)
-    // ct.eliminarTurno(tr)
-    console.log(ct)
-})
-*/
-
-
-module.exports = {Turno, ContenedorTurnos}
+module.exports = {Turno, ContenedorTurno: ContenedorTurno}
