@@ -1,7 +1,7 @@
 const Storebroker = require("./storebroker")
 
 
-class ContenedorAlumnos {
+class ContenedorAlumno {
     alumnos;
 
     constructor(alumnos) {
@@ -26,7 +26,7 @@ class ContenedorAlumnos {
                     a.cantHorasClaseRestantes
                 )
             })
-            return new ContenedorAlumnos(async_result)
+            return new ContenedorAlumno(async_result)
         } catch (err) {
             throw err
         }
@@ -51,8 +51,6 @@ class ContenedorAlumnos {
             this.alumnos.push(alumno_nuevo)
             console.log(this.alumnos)
         })
-
-
     }
 
     editarAlumno(alumno) {
@@ -100,12 +98,8 @@ class Alumno {
         this.cantHorasClaseRestantes = cantHorasClaseRestantes;
     }
 
-
-
-    asociarPaquete(id_paquete) {
-
-
-
+    asociarPaquete(paquete) {
+        // Mediador?
     }
 
     usarClase(duracionClase) {
@@ -125,5 +119,5 @@ class Alumno {
 // })
 
 
-module.exports = {Alumno, ContenedorAlumnos}
+module.exports = {Alumno, ContenedorAlumno}
 

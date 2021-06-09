@@ -1,7 +1,7 @@
 const Storebroker = require('./storebroker')
 
 
-class ContenedorTurnos {
+class ContenedorTurno {
 
     turnos;
 
@@ -25,7 +25,8 @@ class ContenedorTurnos {
                     t.fechaHoraFin
                )
             })
-            return new ContenedorTurnos(async_result)
+
+            return new ContenedorTurno(async_result)
 
         } catch (err) {
             throw err
@@ -123,13 +124,13 @@ let tr = new Turno(
     "03:30:00"
 )
 
-ContenedorTurnos.build().then(ct => {
-    console.log(ct)
-    // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
-    // ct.editarTurno(tr)
-    // ct.eliminarTurno(tr)
-    console.log(ct)
-})
+// ContenedorTurno.build().then(ct => {
+//     console.log(ct)
+//     // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
+//     // ct.editarTurno(tr)
+//     // ct.eliminarTurno(tr)
+//     console.log(ct)
+// })
 
 
-module.exports = {Turno, ContenedorTurnos}
+module.exports = {Turno, ContenedorTurno: ContenedorTurno}

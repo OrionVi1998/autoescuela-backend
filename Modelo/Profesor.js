@@ -101,14 +101,6 @@ class Profesor extends Usuario {
         this.apellido = apellido
         this.telefono = telefono
         this.direccion = direccion
-
-        horaInicio = horaInicio.split(":")
-        horaFin = horaFin.split(":")
-
-        horaInicio = new Date(1,1,1,Number(horaInicio[0]), Number(horaInicio[1]), Number(horaInicio[2]))
-        horaFin = new Date(1,1,1,Number(horaFin[0]), Number(horaFin[1]), Number(horaFin[2]))
-
-
         this.horaInicio = horaInicio
         this.horaFin = horaFin
 
@@ -121,8 +113,27 @@ class Profesor extends Usuario {
     }
 
     // Retorna True si puede tener turno en esta hora
-    verificarDispHoraria(horacheck, duracionClase) {
-        if (this.horaInicio < horacheck && (horacheck + duracionClase) < this.horaFin) {
+    verificarDispHoraria(horaCheck, duracionClase) {
+
+        // Duracion de clase en minutos
+
+        let hI = this.horaInicio.split(":")
+        let hF = this.horaFin.split(":")
+        let hC = horaCheck.split(":")
+
+        let h = Math.round(duracionClase/60)
+        let m = duracionClase%60
+
+        hI = new Date(1,1,1,Number(hI[0]), Number(hI[1]), Number(hI[2]))
+        hF = new Date(1,1,1,Number(hF[0]), Number(hF[1]), Number(hF[2]))
+        let hCI = new Date(1,1,1,Number(hC[0]), Number(hC[1]), Number(hC[2]))
+        let hCF = new Date(1,1,1,Number(hC[0])+h, Number(hC[1])+m, Number(hC[2]))
+
+        console.log(hI < hCI && hCF < hF)
+
+        if (hI < hCI && hCF < hF) {
+
+            console.log(hI < hCI && hCF < hF)
 
             // Check Turnos
             // Si turno overlap -> False
@@ -135,10 +146,11 @@ class Profesor extends Usuario {
 }
 
 
-ContenedorProfesor.build().then(cp => {
-    // console.log(cp.profesores)
-
-
-})
+// ContenedorProfesor.build().then(cp => {
+//     let p = new Profesor(
+//         1,1,1,1,1,1,11,"10:00:00","15:10:00"
+//     )
+//     p.verificarDispHoraria("11:00:00", 5*60+11)
+// })
 
 module.exports = {Profesor, ContenedorProfesor}

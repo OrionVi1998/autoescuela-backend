@@ -30,6 +30,10 @@ class ContenedorAdministrador {
         }
     }
 
+    getAdministradores() {
+        return this.administradores
+    }
+
 
 }
 
