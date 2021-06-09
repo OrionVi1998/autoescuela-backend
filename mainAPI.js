@@ -8,6 +8,7 @@ const {Alumno, ContenedorAlumno} = require("./Modelo/Alumno")
 const {Pago, ContenedorPagos} = require("./Modelo/Pago")
 const {Administrador, ContenedorAdministrador} = require("./Modelo/Administrador")
 const {Turno, ContenedorTurno} = require("./Modelo/Turno")
+const {asociarPaquete} = require("./Modelo/Mediadores")
 
 let contenedorPagos;
 let contenedorPaquete;
