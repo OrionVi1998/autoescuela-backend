@@ -61,9 +61,7 @@ class ContenedorPaquete {
     }
 
     editarPaquete(paquete) {
-
         Storebroker.editarPaquete(paquete)
-
         this.paquetes = this.paquetes.map(p => {
                 if (p.id_paquete === paquete.id_paquete) {
                     return paquete

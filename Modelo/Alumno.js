@@ -1,7 +1,7 @@
 const Storebroker = require("./storebroker")
 
 
-class ContenedorAlumnos {
+class ContenedorAlumno {
     alumnos;
 
     constructor(alumnos) {
@@ -26,7 +26,7 @@ class ContenedorAlumnos {
                     a.cantHorasClaseRestantes
                 )
             })
-            return new ContenedorAlumnos(async_result)
+            return new ContenedorAlumno(async_result)
         } catch (err) {
             throw err
         }
@@ -51,8 +51,6 @@ class ContenedorAlumnos {
             this.alumnos.push(alumno_nuevo)
             console.log(this.alumnos)
         })
-
-
     }
 
     editarAlumno(alumno) {
@@ -73,6 +71,11 @@ class ContenedorAlumnos {
         Storebroker.eliminarAlumno(alumno)
         this.alumnos = this.alumnos.filter(a => a.id_alumno !== a.id_alumno)
     }
+
+    getAlumno(id_alumno) {
+        return this.alumnos.find(a => a.id_alumno === id_alumno)
+    }
+
 
 }
 
@@ -95,12 +98,8 @@ class Alumno {
         this.cantHorasClaseRestantes = cantHorasClaseRestantes;
     }
 
-
-
-    asociarPaquete() {
-
-
-
+    asociarPaquete(paquete) {
+        // Mediador?
     }
 
     usarClase(duracionClase) {
@@ -114,5 +113,11 @@ class Alumno {
     }
 }
 
-module.exports = {Alumno, ContenedorAlumnos}
+// ContenedorAlumnos.build().then((ca) => {
+//     console.log(ca)
+//     console.log(ca.getAlumno(2))
+// })
+
+
+module.exports = {Alumno, ContenedorAlumno}
 
