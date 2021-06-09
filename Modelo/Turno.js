@@ -165,13 +165,56 @@ class Turno {
 
     }
 
+    verificarPoliticaCancel(turno) {
+
+        /* Primero construimos los objetos Date
+        * asi podemos acceder a la funcionalidad de comparacion
+         */
+
+        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
+        let datetimeTurnoInicio = turno.fechaHoraInicio.split(' ')
+        // agarramos la parte 'date' que seria YY-MM-dd
+        let dateTurnoInicio = datetimeTurnoInicio[0]
+        // agarramos la parte 'time' que seria HH:mm:ss
+        let timeTurnoInicio = datetimeTurnoInicio[1]
+        // construimos el objeto de Date
+        let reservaTurnoInicio = new Date(dateTurnoInicio.split('-')[0],
+                                    dateTurnoInicio.split('-')[1],
+                                    dateTurnoInicio.split('-')[2],
+                                    timeTurnoInicio.split(':')[0],
+                                    timeTurnoInicio.split(':')[1],
+                                    timeTurnoInicio.split(':')[2])
+
+        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
+        let datetimeThisTurnoInicio = this.fechaHoraInicio.split(' ')
+        // agarramos la parte 'date' que seria YY-MM-dd
+        let dateThisTurnoInicio = datetimeThisTurnoInicio[0]
+        // agarramos la parte 'time' que seria HH:mm:ss
+        let timeThisTurnoInicio = datetimeThisTurnoInicio[1]
+        // construimos el objeto de Date
+        let reservaThisTurnoInicio = new Date(dateThisTurnoInicio.split('-')[0],
+                                        dateThisTurnoInicio.split('-')[1],
+                                        dateThisTurnoInicio.split('-')[2],
+                                        timeThisTurnoInicio.split(':')[0],
+                                        timeThisTurnoInicio.split(':')[1],
+                                        timeThisTurnoInicio.split(':')[2])
+
+        if (reservaThisTurnoInicio.getYear() == reservaTurnoInicio.getYear() &&
+            reservaThisTurnoInicio.getMonth() == reservaTurnoInicio.getMonth()) {
+
+            if ((reservaThisTurnoInicio.getDay() - reservaTurnoInicio.getDay()) >= 1) {
+                return true;
+            }
+
+            return false;
+    }
+
     marcarTurnosIncompat() {
         // storebroker = getTurnos(...)
     }
 
     desvincularProfesor() {}
     tieneTurnosRestantes() {}
-    verificarPoliticaCancel() {}
 
 }
 
