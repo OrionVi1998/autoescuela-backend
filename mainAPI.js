@@ -8,7 +8,7 @@ const {Alumno, ContenedorAlumno} = require("./Modelo/Alumno")
 const {Pago, ContenedorPagos} = require("./Modelo/Pago")
 const {Administrador, ContenedorAdministrador} = require("./Modelo/Administrador")
 const {Turno, ContenedorTurno} = require("./Modelo/Turno")
-const {asociarPaquete} = require("./Modelo/Mediadores")
+const {mediadorAsociarPaquete} = require("./Modelo/Mediadores")
 
 let contenedorPagos;
 let contenedorPaquete;
@@ -53,7 +53,6 @@ api.get("/getPaquetes/", (req, res) => {
 })
 
 api.get("/getPagos/", (req, res) => {
-
     let pagos_retorno = contenedorPagos.getPagos()
     console.log("GET ALUMNOS - ENVIANDO")
     res.send(pagos_retorno)
@@ -62,6 +61,9 @@ api.get("/getPagos/", (req, res) => {
 
 api.get("/getTurnos/", (req, res) => {
 
+    let turnos_retorno = contenedorTurno.getTurnos()
+    console.log("GET TURNOS - ENVIANDO")
+    res.send(turnos_retorno)
 
 })
 
@@ -77,8 +79,14 @@ api.get("/getProfesores/", (req, res) => {
     res.send(profesores_retorno)
 })
 
-api.get("/getAdministradores/",(req, res) => {
+api.get("/getAdministradores/", (req, res) => {
     let administradores_retorno = contenedorAdministrador.getAdministradores()
     console.log("GET ADMINISTRADORES")
     res.send(administradores_retorno)
+})
+
+api.post("/crearAlumno/", (req, res) => {
+    //TODO
+    console.log(req)
+
 })
