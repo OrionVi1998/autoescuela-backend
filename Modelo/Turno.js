@@ -152,7 +152,7 @@ class Turno {
         /* Terminamos de construir */
 
         // si tienen el mismo DateTime, entonces no se puede reservar el turno
-        if (reservaThisTurnoInicio.getTime() == reservaTurnoInicio.getTime()) {
+        if (reservaThisTurnoInicio.getTime() === reservaTurnoInicio.getTime()) {
             return false;
 
         } else if (reservaThisTurnoFin.getTime() < reservaTurnoFin.getTime() &&
