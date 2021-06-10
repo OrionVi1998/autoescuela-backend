@@ -1,6 +1,4 @@
 const Storebroker = require('./storebroker')
-const Profesor = require('./Profesor')
-
 
 class ContenedorTurno {
 
@@ -70,12 +68,54 @@ class ContenedorTurno {
 
     eliminarTurno(turno) {
 
-        Storebroker.eliminarTurno(turno)
+        if (this.verificarPoliticaCancel(turno)) {
 
-        this.turnos = this.turnos.filter(
-            t => t.id_turno !== turno.id_turno
-        );
+            Storebroker.eliminarTurno(turno)
+
+            this.turnos = this.turnos.filter(
+                t => t.id_turno !== turno.id_turno
+            );
+
+        } else {
+            console.log("Este turno no puede ser cancelado.\n Por favor cancelar con 24hs de anticipacion.");
+        }
+
     }
+
+    verificarPoliticaCancel(turno) {
+
+        /* Primero construimos los objetos Date
+        * asi podemos acceder a la funcionalidad de comparacion
+         */
+
+        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
+        let datetimeTurnoInicio = turno.fechaHoraInicio.split(' ')
+        // agarramos la parte 'date' que seria YY-MM-dd
+        let dateTurnoInicio = datetimeTurnoInicio[0]
+        // agarramos la parte 'time' que seria HH:mm:ss
+        let timeTurnoInicio = datetimeTurnoInicio[1]
+        // construimos el objeto de Date
+        let reservaTurnoInicio = new Date(dateTurnoInicio.split('-')[0],
+                                    dateTurnoInicio.split('-')[1],
+                                    dateTurnoInicio.split('-')[2],
+                                    timeTurnoInicio.split(':')[0],
+                                    timeTurnoInicio.split(':')[1],
+                                    timeTurnoInicio.split(':')[2])
+
+        // recibimos la fecha y la hora del 'presente', 'ahora', 'en este preciso instante'
+        let datetimeAhora = new Date();
+
+        if (datetimeAhora.getYear() <= reservaTurnoInicio.getYear() &&
+            datetimeAhora.getMonth() <= reservaTurnoInicio.getMonth()) {
+
+            if ((datetimeAhora.getDay() - reservaTurnoInicio.getDay()) >= 1) {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
 
 }
 
@@ -166,49 +206,6 @@ class Turno {
 
     }
 
-    verificarPoliticaCancel(turno) {
-
-        /* Primero construimos los objetos Date
-        * asi podemos acceder a la funcionalidad de comparacion
-         */
-
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeTurnoInicio = turno.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateTurnoInicio = datetimeTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeTurnoInicio = datetimeTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaTurnoInicio = new Date(dateTurnoInicio.split('-')[0],
-                                    dateTurnoInicio.split('-')[1],
-                                    dateTurnoInicio.split('-')[2],
-                                    timeTurnoInicio.split(':')[0],
-                                    timeTurnoInicio.split(':')[1],
-                                    timeTurnoInicio.split(':')[2])
-
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeThisTurnoInicio = this.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateThisTurnoInicio = datetimeThisTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeThisTurnoInicio = datetimeThisTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaThisTurnoInicio = new Date(dateThisTurnoInicio.split('-')[0],
-                                        dateThisTurnoInicio.split('-')[1],
-                                        dateThisTurnoInicio.split('-')[2],
-                                        timeThisTurnoInicio.split(':')[0],
-                                        timeThisTurnoInicio.split(':')[1],
-                                        timeThisTurnoInicio.split(':')[2])
-
-        if (reservaThisTurnoInicio.getYear() == reservaTurnoInicio.getYear() &&
-            reservaThisTurnoInicio.getMonth() == reservaTurnoInicio.getMonth()) {
-
-            if ((reservaThisTurnoInicio.getDay() - reservaTurnoInicio.getDay()) >= 1) {
-                return true;
-            }
-
-            return false;
-    }
 
     marcarTurnosIncompat() {
         // storebroker = getTurnos(...)
@@ -221,24 +218,29 @@ class Turno {
 
 
 let tr = new Turno(
+    12,
+    2,
+    4,
+    "2021-07-09 07:30:00",
+    "2021-07-09 08:30:00"
+)
+
+let tr2 = new Turno(
     9,
     2,
     4,
-    "2021-06-08 07:30:00",
-    "2021-06-08 08:30:00"
+    "2021-06-08 15:30:00",
+    "2021-06-08 17:00:00"
 )
 
-<<<<<<< HEAD
-
-=======
-// ContenedorTurno.build().then(ct => {
-//     console.log(ct)
-//     // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
-//     // ct.editarTurno(tr)
-//     // ct.eliminarTurno(tr)
-//     console.log(ct)
-// })
->>>>>>> e05d8065c50aa9f35a6bd8dac55218ec1b69f8ee
+ContenedorTurno.build().then(ct => {
+    console.log(ct)
+    // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
+    // ct.editarTurno(tr)
+    ct.eliminarTurno(tr)
+    // console.log(ct.verificarPoliticaCancel(tr))
+    // console.log(ct)
+})
 
 
 module.exports = {Turno, ContenedorTurno: ContenedorTurno}
