@@ -39,7 +39,14 @@ init().then(() => {
 })
 
 
-api.use(cors({origin: "http://localhost:3000"}))
+api.use(cors({
+    "origin": "http://localhost:3000",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+}))
+api.use(express.json())
+
 
 
 api.get("/", (req, res) => {
@@ -85,8 +92,8 @@ api.get("/getAdministradores/", (req, res) => {
     res.send(administradores_retorno)
 })
 
-api.post("/crearAlumno/", (req, res) => {
+api.put("/crearAlumno/", (req, res) => {
     //TODO
-    console.log(req)
-
+    console.log(req.body) // objeto json con el alumno
 })
+
