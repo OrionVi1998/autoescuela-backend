@@ -1,6 +1,6 @@
 
 
-function asociarPaquete() {
+function mediadorAsociarPaquete(contenedorAlumnos, contenedorPagos, contenedorPaquete) {
 
 }
 
@@ -8,5 +8,5 @@ function asociarPaquete() {
 
 module.exports = {
     // Funciones mediadores
-    asociarPaquete
+    mediadorAsociarPaquete
 }

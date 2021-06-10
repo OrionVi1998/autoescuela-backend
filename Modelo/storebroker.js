@@ -17,7 +17,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -33,7 +33,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -53,7 +53,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -70,7 +70,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -85,7 +85,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -99,7 +99,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
 
 
@@ -119,7 +119,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -134,7 +134,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -149,7 +149,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -166,7 +166,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -186,7 +186,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -201,7 +201,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -216,7 +216,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -233,7 +233,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -251,7 +251,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -265,7 +265,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -279,7 +279,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -297,7 +297,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -316,7 +316,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -331,7 +331,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 
@@ -346,7 +346,7 @@ class Storebroker {
         } catch (err) {
             throw err;
         } finally {
-            if (conn) await conn.end;
+            if (conn) await conn.end();
         }
     }
 }
