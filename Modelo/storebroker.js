@@ -109,9 +109,9 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
+            // Cuando se crea un alumno las horas tienen que ser 0
             const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
-                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes]);
-            console.log(rows); // TODO
+                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, 0, 0]);
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
             return last_id[0]["LAST_INSERT_ID()"];

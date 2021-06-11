@@ -93,7 +93,17 @@ api.get("/getAdministradores/", (req, res) => {
 })
 
 api.put("/crearAlumno/", (req, res) => {
-    //TODO
+    //
     console.log(req.body) // objeto json con el alumno
+    let nombre, apellido, telefono, direccion;
+    ({nombre, apellido, telefono, direccion} = req.body)
+
+    try {
+        contenedorAlumno.crearAlumno(nombre, apellido, Number(telefono), direccion)
+        res.send(true)
+    } catch (e) {
+        res.error()
+    }
+
 })
 

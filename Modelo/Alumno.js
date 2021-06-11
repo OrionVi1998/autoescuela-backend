@@ -36,15 +36,16 @@ class ContenedorAlumno {
         return this.alumnos
     }
 
-    crearAlumno(nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) {
+    crearAlumno(nombre, apellido, telefono, direccion) {
+        //Cuando se crea el alumno la cantidad de clases es
         let alumno_nuevo = new Alumno(
             9999,
             nombre,
             apellido,
             telefono,
             direccion,
-            cantClasesRestantes,
-            cantHorasClaseRestantes
+            0,
+            0
         )
         Storebroker.crearAlumno(alumno_nuevo).then(id => {
             alumno_nuevo.id_alumno = id
