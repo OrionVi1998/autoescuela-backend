@@ -12,6 +12,7 @@ class ContenedorTurno {
         }
     }
 
+
     static async build() {
         try {
             let async_result = await Storebroker.getTurnos()
@@ -21,7 +22,8 @@ class ContenedorTurno {
                     t.ALUMNO_ID,
                     t.USUARIO_ID,
                     t.fechaHoraInicio,
-                    t.fechaHoraFin
+                    t.fechaHoraFin,
+                    t.profesorPresente
                 )
             })
 
@@ -32,18 +34,21 @@ class ContenedorTurno {
         }
     }
 
+
     getTurnos() {
         return this.turnos
     }
 
-    crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin) {
+
+    crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente) {
 
         let tur = new Turno(
             500,
             alumno_id,
             usuario_id,
             fechaHoraInicio,
-            fechaHoraFin
+            fechaHoraFin,
+            profesorPresente
         );
 
         Storebroker.crearTurno(tur).then(r => {
@@ -52,6 +57,7 @@ class ContenedorTurno {
             console.log(tur.id_turno)
         })
     }
+
 
     editarTurno(turno) {
 
@@ -65,6 +71,7 @@ class ContenedorTurno {
             }
         });
     }
+
 
     eliminarTurno(turno) {
 
@@ -82,6 +89,7 @@ class ContenedorTurno {
 
     }
 
+
     verificarPoliticaCancel(turno) {
 
         /* Primero construimos los objetos Date
@@ -89,18 +97,7 @@ class ContenedorTurno {
          */
 
         // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeTurnoInicio = turno.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateTurnoInicio = datetimeTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeTurnoInicio = datetimeTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaTurnoInicio = new Date(dateTurnoInicio.split('-')[0],
-                                    dateTurnoInicio.split('-')[1],
-                                    dateTurnoInicio.split('-')[2],
-                                    timeTurnoInicio.split(':')[0],
-                                    timeTurnoInicio.split(':')[1],
-                                    timeTurnoInicio.split(':')[2])
+        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
 
         // recibimos la fecha y la hora del 'presente', 'ahora', 'en este preciso instante'
         let datetimeAhora = new Date();
@@ -117,6 +114,26 @@ class ContenedorTurno {
     }
 
 
+    desvincularProfesor(profesor) {
+        //DESPUES DE eliminarlo
+        this.turnos = this.turnos.map(t => {
+            if (t.usuario_id === profesor.id_usuario) {
+                t.usuario_id = null
+                t.profesorPresente = 0
+                return t
+            } else {
+                return t
+            }
+        })
+    }
+
+
+    tieneTurnosRestantes(alumno) {
+
+        return this.turnos.filter(t => t.alumno_id === alumno.id_alumno).length !== 0
+    }
+
+
 }
 
 
@@ -127,69 +144,28 @@ class Turno {
     usuario_id;
     fechaHoraInicio;
     fechaHoraFin;
+    profesorPresente; // FIXME: Tal vez redundante
 
-    constructor(id_turno, alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin) {
+    constructor(id_turno, alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente) {
         this.id_turno = id_turno
         this.alumno_id = alumno_id
         this.usuario_id = usuario_id
         this.fechaHoraInicio = fechaHoraInicio
         this.fechaHoraFin = fechaHoraFin
+        this.profesorPresente = profesorPresente
     }
+
 
     verificarCompatHoraria(turno) {
 
         /* Primero construimos los objetos Date
          * asi podemos acceder a la funcionalidad de comparacion
          */
+        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
+        let reservaTurnoFin = Turno.convertirFechaStringADate(turno.fechaHoraFin)
 
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeTurnoInicio = turno.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateTurnoInicio = datetimeTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeTurnoInicio = datetimeTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaTurnoInicio = new Date(dateTurnoInicio.split('-')[0],
-            dateTurnoInicio.split('-')[1],
-            dateTurnoInicio.split('-')[2],
-            timeTurnoInicio.split(':')[0],
-            timeTurnoInicio.split(':')[1],
-            timeTurnoInicio.split(':')[2])
-
-        let datetimeTurnoFin = turno.fechaHoraFin.split(' ')
-        let dateTurnoFin = datetimeTurnoFin[0]
-        let timeTurnoFin = datetimeTurnoFin[1]
-        let reservaTurnoFin = new Date(dateTurnoFin.split('-')[0],
-            dateTurnoFin.split('-')[1],
-            dateTurnoFin.split('-')[2],
-            timeTurnoFin.split(':')[0],
-            timeTurnoFin.split(':')[1],
-            timeTurnoFin.split(':')[2])
-
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeThisTurnoInicio = this.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateThisTurnoInicio = datetimeThisTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeThisTurnoInicio = datetimeThisTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaThisTurnoInicio = new Date(dateThisTurnoInicio.split('-')[0],
-            dateThisTurnoInicio.split('-')[1],
-            dateThisTurnoInicio.split('-')[2],
-            timeThisTurnoInicio.split(':')[0],
-            timeThisTurnoInicio.split(':')[1],
-            timeThisTurnoInicio.split(':')[2])
-
-        let datetimeThisTurnoFin = this.fechaHoraFin.split(' ')
-        let dateThisTurnoFin = datetimeThisTurnoFin[0]
-        let timeThisTurnoFin = datetimeThisTurnoFin[1]
-        let reservaThisTurnoFin = new Date(dateThisTurnoFin.split('-')[0],
-            dateThisTurnoFin.split('-')[1],
-            dateThisTurnoFin.split('-')[2],
-            timeThisTurnoFin.split(':')[0],
-            timeThisTurnoFin.split(':')[1],
-            timeThisTurnoFin.split(':')[2])
-
+        let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
+        let reservaThisTurnoFin = Turno.convertirFechaStringADate(this.fechaHoraFin)
         /* Terminamos de construir */
 
         // si tienen el mismo DateTime, entonces no se puede reservar el turno
@@ -203,7 +179,6 @@ class Turno {
         } else {
             return true;
         }
-
     }
 
 
@@ -213,33 +188,8 @@ class Turno {
         * asi podemos acceder a la funcionalidad de comparacion
          */
 
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeTurnoInicio = turno.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateTurnoInicio = datetimeTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeTurnoInicio = datetimeTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaTurnoInicio = new Date(dateTurnoInicio.split('-')[0],
-            dateTurnoInicio.split('-')[1],
-            dateTurnoInicio.split('-')[2],
-            timeTurnoInicio.split(':')[0],
-            timeTurnoInicio.split(':')[1],
-            timeTurnoInicio.split(':')[2])
-
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let datetimeThisTurnoInicio = this.fechaHoraInicio.split(' ')
-        // agarramos la parte 'date' que seria YY-MM-dd
-        let dateThisTurnoInicio = datetimeThisTurnoInicio[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeThisTurnoInicio = datetimeThisTurnoInicio[1]
-        // construimos el objeto de Date
-        let reservaThisTurnoInicio = new Date(dateThisTurnoInicio.split('-')[0],
-            dateThisTurnoInicio.split('-')[1],
-            dateThisTurnoInicio.split('-')[2],
-            timeThisTurnoInicio.split(':')[0],
-            timeThisTurnoInicio.split(':')[1],
-            timeThisTurnoInicio.split(':')[2])
+        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
+        let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
 
         if (reservaThisTurnoInicio.getYear() === reservaTurnoInicio.getYear() &&
             reservaThisTurnoInicio.getMonth() === reservaTurnoInicio.getMonth()) {
@@ -250,31 +200,36 @@ class Turno {
 
             return false;
         }
+    }
 
 
-        marcarTurnosIncompat()
-        {
-            // storebroker = getTurnos(...)
-        }
+    static convertirFechaStringADate(fechaHoraString) {
 
-        desvincularProfesor()
-        {
-        }
-        tieneTurnosRestantes()
-        {
-        }
+        let datetimeTurno = fechaHoraString.split(' ')
+        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
+        let dateTurno = datetimeTurno[0]
+        // agarramos la parte 'time' que seria HH:mm:ss
+        let timeTurno = datetimeTurno[1]
 
+        // construimos el objeto de Date
+        return new Date(dateTurno.split('-')[0],
+            dateTurno.split('-')[1],
+            dateTurno.split('-')[2],
+            timeTurno.split(':')[0],
+            timeTurno.split(':')[1],
+            timeTurno.split(':')[2])
     }
 
 }
 
 
 // let tr = new Turno(
-//     12,
+//     13,
 //     2,
 //     4,
-//     "2021-07-09 07:30:00",
-//     "2021-07-09 08:30:00"
+//     "2021-08-09 09:30:00",
+//     "2021-08-09 10:30:00",
+//     1
 // )
 
 // let tr2 = new Turno(
@@ -284,14 +239,15 @@ class Turno {
 //     "2021-06-08 15:30:00",
 //     "2021-06-08 17:00:00"
 // )
-
+//
 // ContenedorTurno.build().then(ct => {
-//     console.log(ct)
-//     // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin)
+//     // console.log(ct)
+//     // ct.crearTurno(tr.alumno_id, tr.usuario_id, tr.fechaHoraInicio, tr.fechaHoraFin, tr.profesorPresente)
 //     // ct.editarTurno(tr)
-//     ct.eliminarTurno(tr)
+//     // ct.eliminarTurno(tr)
 //     // console.log(ct.verificarPoliticaCancel(tr))
 //     // console.log(ct)
+//     // console.log(ct.tieneTurnosRestantes({id_alumno: 2}))
 // })
 
 

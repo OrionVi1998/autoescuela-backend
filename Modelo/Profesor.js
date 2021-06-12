@@ -1,4 +1,3 @@
-
 const Usuario = require("./Usuario")
 const Storebroker = require("./Storebroker")
 
@@ -103,14 +102,8 @@ class Profesor extends Usuario {
         this.direccion = direccion
         this.horaInicio = horaInicio
         this.horaFin = horaFin
-
-
     }
 
-    // Seguro pertenecen
-    autorizarEmail() {
-
-    }
 
     // Retorna True si puede tener turno en esta hora
     verificarDispHoraria(horaCheck, duracionClase) {
@@ -121,13 +114,13 @@ class Profesor extends Usuario {
         let hF = this.horaFin.split(":")
         let hC = horaCheck.split(":")
 
-        let h = Math.round(duracionClase/60)
-        let m = duracionClase%60
+        let h = Math.round(duracionClase / 60)
+        let m = duracionClase % 60
 
-        hI = new Date(1,1,1,Number(hI[0]), Number(hI[1]), Number(hI[2]))
-        hF = new Date(1,1,1,Number(hF[0]), Number(hF[1]), Number(hF[2]))
-        let hCI = new Date(1,1,1,Number(hC[0]), Number(hC[1]), Number(hC[2]))
-        let hCF = new Date(1,1,1,Number(hC[0])+h, Number(hC[1])+m, Number(hC[2]))
+        hI = new Date(1, 1, 1, Number(hI[0]), Number(hI[1]), Number(hI[2]))
+        hF = new Date(1, 1, 1, Number(hF[0]), Number(hF[1]), Number(hF[2]))
+        let hCI = new Date(1, 1, 1, Number(hC[0]), Number(hC[1]), Number(hC[2]))
+        let hCF = new Date(1, 1, 1, Number(hC[0]) + h, Number(hC[1]) + m, Number(hC[2]))
 
         console.log(hI < hCI && hCF < hF)
 

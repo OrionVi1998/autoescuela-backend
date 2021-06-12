@@ -8,7 +8,7 @@ const {Alumno, ContenedorAlumno} = require("./Modelo/Alumno")
 const {Pago, ContenedorPagos} = require("./Modelo/Pago")
 const {Administrador, ContenedorAdministrador} = require("./Modelo/Administrador")
 const {Turno, ContenedorTurno} = require("./Modelo/Turno")
-const {mediadorAsociarPaquete} = require("./Modelo/Mediadores")
+const {mediadorAsociarPaquete, mediadorPagosPaqueteAlumnos} = require("./Modelo/Mediadores")
 
 let contenedorPagos;
 let contenedorPaquete;
@@ -61,13 +61,17 @@ api.get("/getPaquetes/", (req, res) => {
 
 api.get("/getPagos/", (req, res) => {
     let pagos_retorno = contenedorPagos.getPagos()
-    console.log("GET ALUMNOS - ENVIANDO")
+    console.log("GET PAGOS - ENVIANDO")
     res.send(pagos_retorno)
-
 })
 
-api.get("/getTurnos/", (req, res) => {
+api.get("/getPagosAlumno", ((req, res) => {
+    let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(req.query.id_alumno))
+    console.log(`GET PAGOS ALUMNO ${req.query.id_alumno} - ENVIANDO`)
+    res.send(pagos_alumno_ret)
+}))
 
+api.get("/getTurnos/", (req, res) => {
     let turnos_retorno = contenedorTurno.getTurnos()
     console.log("GET TURNOS - ENVIANDO")
     res.send(turnos_retorno)
@@ -93,7 +97,26 @@ api.get("/getAdministradores/", (req, res) => {
 })
 
 api.put("/crearAlumno/", (req, res) => {
-    //TODO
+    //
     console.log(req.body) // objeto json con el alumno
+    let nombre, apellido, telefono, direccion;
+    ({nombre, apellido, telefono, direccion} = req.body)
+
+    try {
+        contenedorAlumno.crearAlumno(nombre, apellido, Number(telefono), direccion)
+        res.send(true)
+    } catch (e) {
+        res.error()
+    }
+
 })
 
+
+api.delete("/eliminarProfesor", (req, res) => {
+
+    let profesores_eliminar = req.body // {nombres ...}
+
+    // contenedorProfesor.eliminarProfesor(profesores_eliminar)
+    // contenedorTurno.desvincularProfesor(profesores_eliminar)
+
+})

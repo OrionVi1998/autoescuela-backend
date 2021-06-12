@@ -36,15 +36,16 @@ class ContenedorAlumno {
         return this.alumnos
     }
 
-    crearAlumno(nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) {
+    crearAlumno(nombre, apellido, telefono, direccion) {
+        //Cuando se crea el alumno la cantidad de clases es
         let alumno_nuevo = new Alumno(
             9999,
             nombre,
             apellido,
             telefono,
             direccion,
-            cantClasesRestantes,
-            cantHorasClaseRestantes
+            0,
+            0
         )
         Storebroker.crearAlumno(alumno_nuevo).then(id => {
             alumno_nuevo.id_alumno = id
@@ -72,8 +73,8 @@ class ContenedorAlumno {
         this.alumnos = this.alumnos.filter(a => a.id_alumno !== a.id_alumno)
     }
 
-    getAlumno(id_alumno) {
-        return this.alumnos.find(a => a.id_alumno === id_alumno)
+    getAlumno(alumno) {
+        return this.alumnos.find(a => a.id_alumno === alumno.id_alumno)
     }
 
 
@@ -103,20 +104,23 @@ class Alumno {
     }
 
     usarClase(duracionClase) {
+
         this.cantClasesRestantes -= 1
         this.cantHorasClaseRestantes -= duracionClase
+        Storebroker.editarAlumno(this)
     }
 
     devolverClase(duracionClase) {
+
         this.cantClasesRestantes += 1
         this.cantHorasClaseRestantes += duracionClase
+        Storebroker.editarAlumno(this)
     }
 }
 
-// ContenedorAlumnos.build().then((ca) => {
-//     console.log(ca)
-//     console.log(ca.getAlumno(2))
-// })
+
+
+// let duracionClase = this.cantClasesRestantes / this.cantHorasClaseRestantes
 
 
 module.exports = {Alumno, ContenedorAlumno}

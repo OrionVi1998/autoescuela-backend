@@ -1,4 +1,5 @@
 
+
 const config = require("./config.json");
 const mariadb = require("mariadb");
 const pool = mariadb.createPool(config);
@@ -109,9 +110,9 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
+            // Cuando se crea un alumno las horas tienen que ser 0
             const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
-                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes]);
-            console.log(rows); // TODO
+                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, 0, 0]);
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
             return last_id[0]["LAST_INSERT_ID()"];
@@ -305,8 +306,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, fechaHoraInicio, fechaHoraFin) VALUES (?, ?, ?, ?)",
-                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin]);
+            const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, fechaHoraInicio, fechaHoraFin, profesorPresente) VALUES (?, ?, ?, ?, ?)",
+                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.profesorPresente]);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
@@ -324,8 +325,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, fechaHoraInicio=?, fechaHoraFin=? WHERE ID_TURNO=?",
-                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.id_turno]);
+            const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, fechaHoraInicio=?, fechaHoraFin=?, profesorPresente=? WHERE ID_TURNO=?",
+                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.profesorPresente, turno.id_turno]);
             console.log(rows); // TODO
 
         } catch (err) {
@@ -341,6 +342,21 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("DELETE FROM turnos WHERE ID_TURNO=?",
                 [turno.id_turno]);
+            console.log(rows); // TODO
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (conn) await conn.end();
+        }
+    }
+
+    static async getTurnosProfesor(profesor) {
+        let conn;
+        try {
+            conn = await pool.getConnection();
+            const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, fechaHoraInicio=?, fechaHoraFin=? profesorPresente=? WHERE ID_TURNO=?",
+                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.profesorPresente, turno.id_turno]);
             console.log(rows); // TODO
 
         } catch (err) {
