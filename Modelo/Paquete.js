@@ -36,6 +36,10 @@ class ContenedorPaquete {
         return this.paquetes
     }
 
+    getPaquete(id) {
+        return this.paquetes.find(p => p.id_paquete === id)
+    }
+
     getPaquetesVisibles() {
         return this.paquetes.filter(p => p.estado === 1)
     }

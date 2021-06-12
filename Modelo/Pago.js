@@ -37,6 +37,10 @@ class ContenedorPagos {
         return this.pagos;
     }
 
+    getPagosAlumno(alumno) {
+        return this.pagos.filter(p => p.alumno_id === alumno.id_alumno);
+    }
+
     crearPago(alumno_id, paquete_id, monto, fechaRealizada, pagado) {
 
         let pago = new Pago(
@@ -55,9 +59,13 @@ class ContenedorPagos {
         });
     }
 
-    generarPagos(paquete, alumno) {
+    generarPagos(paquete, alumno, date, porcentajeSenia) {
 
-        //Generar 3 pagos por paquete
+        let monto_inicial = Math.round(paquete.precio*porcentajeSenia)
+
+        this.crearPago(alumno.alumno_id, paquete.paquete_id, monto_inicial, date, 0)
+        this.crearPago(alumno.alumno_id, paquete.paquete_id, Math.round(paquete.precio - monto_inicial/ 2), null, 0)
+        this.crearPago(alumno.alumno_id, paquete.paquete_id, Math.round(paquete.precio - monto_inicial/ 2), null, 0)
 
     }
 
@@ -78,8 +86,12 @@ class ContenedorPagos {
         this.pagos = this.pagos.filter(p => p.id_pago !== pago.id_pago)
     }
 
-    pagosPendientes() {
+    getPagosPendientes() {
         return this.pagos.filter(p => p.pagado === 0)
+    }
+
+    enDeudado(alumno) {
+        return this.pagos.filter(p => p.pagado === 0).length !== 0
     }
 }
 
@@ -102,13 +114,15 @@ class Pago {
         this.pagado = pagado
     }
 
-    registrarPago() {
-        this.pagado = !this.pagado;
+    registrarPago(date) {
+        this.pagado = 1;
+        this.fechaRealizada = date
+        Storebroker.editarPago(this)
     }
 
 }
 
-let pago = new Pago(5, 2, 3, 300, "2021-12-25", 0);
+// let pago = new Pago(5, 2, 3, 300, "2021-12-25", 0);
 
 // ContenedorPagos.build().then(cp => {
 //     console.log(cp)
@@ -116,7 +130,7 @@ let pago = new Pago(5, 2, 3, 300, "2021-12-25", 0);
 //     //cp.getPagos();
 //     //cp.modificarPago(pago);
 //     //cp.eliminarPago(pago);
-//     //cp.pagosPendientes();
+//     //cp.getPagosPendientes();
 //
 // });
 
