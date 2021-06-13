@@ -1,5 +1,5 @@
 const Usuario = require("./Usuario")
-const Storebroker = require("./Storebroker")
+const Storebroker = require("./storebroker")
 
 class ContenedorProfesor {
 

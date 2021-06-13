@@ -1,4 +1,4 @@
-let config;
+// let config;
 
 
 
@@ -17,6 +17,7 @@ config = {
     "port": process.env.MARIADB_PORT
 }
 
+// const config = require("./config.json");
 const mariadb = require("mariadb");
 const pool = mariadb.createPool(config);
 
