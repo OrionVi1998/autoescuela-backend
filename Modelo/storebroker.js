@@ -2,7 +2,14 @@ let config;
 
 
 
-if (process.env.CONFIG) {
+// const config = require("./config.json");
+const mariadb = require("mariadb");
+const fs = require("fs");
+
+
+
+if (!fs.existsSync("./config.json")) {
+    console.log(true)
     config = {
         "connectionLimit": 10,
         "host": process.env.MARIADB_HOST,
@@ -17,9 +24,6 @@ if (process.env.CONFIG) {
 }
 
 
-
-// const config = require("./config.json");
-const mariadb = require("mariadb");
 const pool = mariadb.createPool(config);
 
 class Storebroker {
