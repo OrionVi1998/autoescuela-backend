@@ -3,6 +3,9 @@ let config;
 try {
     config = require("./config.json");
 } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+        throw e;
+    }
     config = {
         "connectionLimit": 10,
         "host": process.env.MARIADB_HOST,
@@ -172,7 +175,7 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM paquetes");
 
-            let paquetes_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+            let paquetes_retorno = rows.slice(0, rows.length) // sacamos las rows de META
 
             return paquetes_retorno
 
@@ -239,7 +242,7 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM pagos");
 
-            let pagos_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+            let pagos_retorno = rows.slice(0, rows.length) // sacamos las rows de META
 
             return pagos_retorno
 
@@ -302,7 +305,7 @@ class Storebroker {
             conn = await pool.getConnection();
             const rows = await conn.query("SELECT * FROM turnos");
 
-            let turnos_retorno = rows.slice(0,rows.length) // sacamos las rows de META
+            let turnos_retorno = rows.slice(0, rows.length) // sacamos las rows de META
 
             return turnos_retorno
 
