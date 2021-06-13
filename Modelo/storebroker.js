@@ -2,7 +2,7 @@ let config;
 
 
 
-if (process.env.CONFIG) {
+if (process.env.CONFIG === true) {
     config = {
         "connectionLimit": 10,
         "host": process.env.MARIADB_HOST,
