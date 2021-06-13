@@ -217,7 +217,7 @@ class Turno {
             dateTurno.split('-')[2],
             timeTurno.split(':')[0],
             timeTurno.split(':')[1],
-            timeTurno.split(':')[2])
+           0)
     }
 
 }

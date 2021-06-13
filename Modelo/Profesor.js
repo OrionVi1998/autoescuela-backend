@@ -40,6 +40,10 @@ class ContenedorProfesor {
         return this.profesores
     }
 
+    getProfesor(profesor) {
+        return this.profesores.find(p => p.id_usuario === profesor.id_usuario)
+    }
+
     crearProfesor(email, nombre, apellido, telefono, direccion, horaInicio, horaFin) {
         // era guardar profesor, cambie de nombre
 

@@ -48,7 +48,6 @@ api.use(cors({
 api.use(express.json())
 
 
-
 api.get("/", (req, res) => {
     res.send({value: "Hello postman"})
 })
@@ -71,11 +70,32 @@ api.get("/getPagosAlumno", ((req, res) => {
     res.send(pagos_alumno_ret)
 }))
 
+api.put("/registrarPago", ((req, res) => {
+
+    try {
+        let pago = contenedorPagos.getPago(req.body.params)
+        pago.registrarPago()
+        res.send(req.body.params)
+    } catch (e) {
+        console.log(e)
+    }
+
+}))
+
 api.get("/getTurnos/", (req, res) => {
     let turnos_retorno = contenedorTurno.getTurnos()
     console.log("GET TURNOS - ENVIANDO")
-    res.send(turnos_retorno)
 
+    turnos_retorno.map((t) => {
+
+        let alumno = contenedorAlumno.getAlumno({id_alumno: t.alumno_id})
+        let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
+
+        t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
+
+    })
+
+    res.send(turnos_retorno)
 })
 
 api.get("/getAlumnos/", (req, res) => {
@@ -106,16 +126,14 @@ api.put("/crearAlumno/", (req, res) => {
         contenedorAlumno.crearAlumno(nombre, apellido, Number(telefono), direccion)
         res.send(true)
     } catch (e) {
-        res.error()
+        console.log(e)
     }
 
 })
 
 
 api.delete("/eliminarProfesor", (req, res) => {
-
     let profesores_eliminar = req.body // {nombres ...}
-
     // contenedorProfesor.eliminarProfesor(profesores_eliminar)
     // contenedorTurno.desvincularProfesor(profesores_eliminar)
 
