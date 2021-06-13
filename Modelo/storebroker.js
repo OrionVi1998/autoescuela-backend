@@ -2,20 +2,21 @@
 
 
 
-// if (process.env.CONFIG) {
-//
-// } else {
-//     // config = require("./config.json");
-// }
+if (process.env.CONFIG) {
+    config = {
+        "connectionLimit": 10,
+        "host": process.env.MARIADB_HOST,
+        "user": process.env.MARIADB_US,
+        "password": process.env.MARIADB_PS,
+        "database": process.env.MARIADB_DB,
+        "port": process.env.MARIADB_PORT
+    }
 
-config = {
-    "connectionLimit": 10,
-    "host": process.env.MARIADB_HOST,
-    "user": process.env.MARIADB_US,
-    "password": process.env.MARIADB_PS,
-    "database": process.env.MARIADB_DB,
-    "port": process.env.MARIADB_PORT
+} else {
+    config = require("./config.json");
 }
+
+
 
 // const config = require("./config.json");
 const mariadb = require("mariadb");
