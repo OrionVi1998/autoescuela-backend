@@ -1,11 +1,8 @@
 let config;
 
-try {
-    config = require("./config.json");
-} catch (e) {
-    if (e.code !== 'MODULE_NOT_FOUND') {
-        throw e;
-    }
+
+
+if (process.env.CONFIG) {
     config = {
         "connectionLimit": 10,
         "host": process.env.MARIADB_HOST,
@@ -14,6 +11,8 @@ try {
         "database": process.env.MARIADB_DB,
         "port": process.env.MARIADB_PORT
     }
+} else {
+    config = require("./config.json");
 }
 
 const mariadb = require("mariadb");
