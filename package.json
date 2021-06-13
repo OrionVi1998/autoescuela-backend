@@ -4,6 +4,7 @@
   "description": "Node api",
   "main": "mainAPI.js",
   "scripts": {
+    "start": "node mainAPI.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
