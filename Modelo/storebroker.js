@@ -12,7 +12,7 @@ if (process.env.CONFIG) {
         "port": process.env.MARIADB_PORT
     }
 } else {
-    config = require("./config.json");
+    // config = require("./config.json");
 }
 
 const mariadb = require("mariadb");
