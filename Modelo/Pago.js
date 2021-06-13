@@ -23,7 +23,7 @@ class ContenedorPagos {
                     pago.ALUMNO_ID,
                     pago.PAQUETE_ID,
                     pago.monto,
-                    pago.fechaRealizada,
+                    pago.fechaRealizado,
                     pago.pagado
                 )
             })
@@ -35,6 +35,10 @@ class ContenedorPagos {
 
     getPagos() {
         return this.pagos;
+    }
+
+    getPago(pago) {
+        return this.pagos.find(p => pago.id_pago === p.id_pago)
     }
 
     getPagosAlumno(alumno) {
@@ -114,9 +118,9 @@ class Pago {
         this.pagado = pagado
     }
 
-    registrarPago(date) {
+    registrarPago() {
         this.pagado = 1;
-        this.fechaRealizada = date
+        this.fechaRealizada = new Date()
         Storebroker.editarPago(this)
     }
 
