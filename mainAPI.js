@@ -40,7 +40,7 @@ init().then(() => {
 
 
 api.use(cors({
-    "origin": "http://localhost:3000",
+    "origin": process.env.CORS_ORIGIN, //https://proyecto-autoescuela.web.app/
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
