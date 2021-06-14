@@ -4,3 +4,4 @@
 /node_modules
 /.idea
 /Modelo/config.json
+/docker-compose.yml
