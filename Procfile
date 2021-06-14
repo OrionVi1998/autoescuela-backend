@@ -1,1 +1,1 @@
-web: node /mainAPI.js
+web: node mainAPI.js
