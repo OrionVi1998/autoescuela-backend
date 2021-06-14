@@ -13,6 +13,8 @@ config = {
 
 
 console.log("DB CONNECTION ATTEMPT")
+console.log(config)
+
 const pool = mariadb.createPool(config);
 
 class Storebroker {
