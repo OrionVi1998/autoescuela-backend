@@ -47,6 +47,20 @@ api.use(cors({
 }))
 api.use(express.json())
 
+api.get("/login", (req, res) => {
+    let admin = contenedorAdministrador.getAdministradores()
+    let profesor = contenedorProfesor.getProfesores()
+
+    admin = admin.find(a => a.email === req.query.email)
+    profesor = profesor.find(p => p.email === req.query.email)
+
+    console.log(`LOGIN ATTEMPT: ${req.query.email}`)
+
+    if (admin) {res.send({session: true, credencial:admin.credencial})}
+    else if (profesor) {res.send({session: false, credencial:profesor.credencial})}
+    else {res.send({session:false})}
+
+})
 
 api.get("/", (req, res) => {
     res.send({value: "Hello postman"})

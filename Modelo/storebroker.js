@@ -1,29 +1,18 @@
 let config;
 
-
-
-// const config = require("./config.json");
 const mariadb = require("mariadb");
-const fs = require("fs");
 
-
-
-if (!fs.existsSync("./config.json")) {
-    console.log(true)
-    config = {
-        "connectionLimit": 10,
-        "host": process.env.MARIADB_HOST,
-        "user": process.env.MARIADB_US,
-        "password": process.env.MARIADB_PS,
-        "database": process.env.MARIADB_DB,
-        "port": process.env.MARIADB_PORT
-    }
-
-} else {
-    config = require("./config.json");
+config = {
+    "connectionLimit": 10,
+    "host": process.env.MARIADB_HOST,
+    "user": process.env.MARIADB_US,
+    "password": process.env.MARIADB_PS,
+    "database": process.env.MARIADB_DB,
+    "port": process.env.MARIADB_PORT
 }
 
 
+console.log("DB CONNECTION ATTEMPT")
 const pool = mariadb.createPool(config);
 
 class Storebroker {
