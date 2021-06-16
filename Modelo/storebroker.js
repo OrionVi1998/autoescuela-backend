@@ -8,11 +8,13 @@ config = {
     "user": process.env.MARIADB_US,
     "password": process.env.MARIADB_PS,
     "database": process.env.MARIADB_DB,
-    "port": process.env.MARIADB_PORT
+    "port": Number(process.env.MARIADB_PORT)
 }
 
 
 console.log("DB CONNECTION ATTEMPT")
+console.log(config)
+
 const pool = mariadb.createPool(config);
 
 class Storebroker {
