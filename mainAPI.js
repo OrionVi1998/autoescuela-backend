@@ -145,6 +145,19 @@ api.put("/crearAlumno/", (req, res) => {
 
 })
 
+api.post("/editarAlumno/", (req, res) => {
+
+    console.log(`EDITAR ALUMNO - ${req.body.id_alumno}`)
+
+    try {
+        contenedorAlumno.editarAlumno(req.body)
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
 
 api.delete("/eliminarProfesor", (req, res) => {
     let profesores_eliminar = req.body // {nombres ...}
