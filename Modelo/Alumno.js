@@ -70,7 +70,7 @@ class ContenedorAlumno {
         // TODO: Ver si la logica de eliminacion estaria aca o no
         // UN ALUMNO NO SE PUEDE ELIMINAR SI ...
         Storebroker.eliminarAlumno(alumno)
-        this.alumnos = this.alumnos.filter(a => a.id_alumno !== a.id_alumno)
+        this.alumnos = this.alumnos.filter(a => alumno.id_alumno !== a.id_alumno)
     }
 
     getAlumno(alumno) {

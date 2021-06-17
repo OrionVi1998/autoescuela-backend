@@ -145,10 +145,36 @@ api.put(`/crearAlumno/`, (req, res) => {
 
 })
 
+api.post("/editarAlumno/", (req, res) => {
+
+    console.log(`EDITAR ALUMNO - ${req.body.id_alumno}`)
+
+    try {
+        contenedorAlumno.editarAlumno(req.body)
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+api.delete("/eliminarAlumno/", (req, res) => {
+
+    console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
+
+    try {
+        contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)})
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+
 
 api.delete(`/eliminarProfesor`, (req, res) => {
     let profesores_eliminar = req.body // {nombres ...}
     // contenedorProfesor.eliminarProfesor(profesores_eliminar)
     // contenedorTurno.desvincularProfesor(profesores_eliminar)
-
 })
