@@ -39,6 +39,10 @@ class ContenedorTurno {
         return this.turnos
     }
 
+    getTurnosProfesor(profesor) {
+        return this.turnos.filter(t => t.usuario_id === profesor.id_usuario)
+    }
+
 
     crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente) {
 
@@ -127,9 +131,67 @@ class ContenedorTurno {
         })
     }
 
+    desvincularTrunosIncompatProfesor(profesor) {
+
+        this.turnos.map(t => {
+            if (t.usuario_id === profesor.id_usuario) {
+                console.log(profesor, t)
+
+
+                let tHoraInicio = t.fechaHoraInicio
+                let tHoraFin = t.fechaHoraFin
+
+                tHoraInicio = new Date(
+                    1,
+                    1,
+                    1,
+                    tHoraInicio.getHours(),
+                    tHoraInicio.getMinutes(),
+                    0)
+
+                tHoraFin = new Date(
+                    1,
+                    1,
+                    1,
+                    tHoraFin.getHours(),
+                    tHoraFin.getMinutes(),
+                    0)
+
+                let pDispHoraInicio = profesor.horaInicio.split(":")
+                let pDispHoraFin = profesor.horaFin.split(":")
+
+                pDispHoraInicio = new Date(
+                    1,
+                    1,
+                    1,
+                    Number(pDispHoraInicio[0]),
+                    Number(pDispHoraInicio[1]),
+                    0)
+                pDispHoraFin = new Date(
+                    1,
+                    1,
+                    1,
+                    Number(pDispHoraFin[0]),
+                    Number(pDispHoraFin[1]),
+                    0)
+
+                // console.log(pDispHoraInicio.toString(), pDispHoraFin)
+                // console.log(tHoraInicio.toString(), tHoraFin.toString())
+                // console.log(pDispHoraInicio > tHoraInicio)
+                // console.log(pDispHoraFin < tHoraFin)
+
+                if (pDispHoraInicio > tHoraInicio || pDispHoraFin < tHoraFin) {
+
+                    //TODO turno a desvincular
+
+                }
+            }
+        })
+
+    }
+
 
     tieneTurnosRestantes(alumno) {
-
         return this.turnos.filter(t => t.alumno_id === alumno.id_alumno).length !== 0
     }
 
@@ -217,7 +279,7 @@ class Turno {
             dateTurno.split('-')[2],
             timeTurno.split(':')[0],
             timeTurno.split(':')[1],
-           0)
+            0)
     }
 
 }
@@ -249,7 +311,6 @@ class Turno {
 //     // console.log(ct)
 //     // console.log(ct.tieneTurnosRestantes({id_alumno: 2}))
 // })
-
 
 
 module.exports = {Turno, ContenedorTurno: ContenedorTurno}

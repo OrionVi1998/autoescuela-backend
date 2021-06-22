@@ -95,7 +95,7 @@ class ContenedorPagos {
     }
 
     enDeudado(alumno) {
-        return this.pagos.filter(p => p.pagado === 0).length !== 0
+        return this.pagos.filter(p => p.pagado === 0 && p.alumno_id === alumno.id_alumno).length !== 0
     }
 }
 
