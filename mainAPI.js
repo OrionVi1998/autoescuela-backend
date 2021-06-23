@@ -178,3 +178,17 @@ api.delete(`/eliminarProfesor`, (req, res) => {
     // contenedorProfesor.eliminarProfesor(profesores_eliminar)
     // contenedorTurno.desvincularProfesor(profesores_eliminar)
 })
+
+api.put("/crearPaquete/", (req, res) => {
+    console.log(req.body)
+    let nombre, precio, cantClases, durClases;
+    ({nombre, precio, cantClases, durClases} = req.body)
+
+    try {
+        contenedorPaquete.crearPaquete(nombre, Number(precio), Number(cantClases), Number(durClases))
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})

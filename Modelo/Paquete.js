@@ -21,7 +21,7 @@ class ContenedorPaquete {
                     p.ID_PAQUETE,
                     p.nombre,
                     p.cantClases,
-                    p.duracionClases,
+                    p.durClases,
                     p.precio,
                     p.estado
                 )
@@ -45,13 +45,13 @@ class ContenedorPaquete {
     }
 
 
-    crearPaquete(nombre, cantClases, duracionClases, precio, estado) {
+    crearPaquete(nombre, cantClases, durClases, precio, estado) {
 
         let paq = new Paquete(
             9999,
             nombre,
             cantClases,
-            duracionClases,
+            durClases,
             precio,
             estado
         );
@@ -95,15 +95,15 @@ class Paquete {
     id_paquete;
     nombre;
     cantClases;
-    duracionClases;
+    durClases;
     precio;
     estado;
 
-    constructor(id_paquete, nombre, cantClases, duracionClase, precio, estado = 1) {
+    constructor(id_paquete, nombre, cantClases, durClase, precio, estado = 1) {
         this.id_paquete = id_paquete
         this.nombre = nombre
         this.cantClases = cantClases
-        this.duracionClases = duracionClase
+        this.durClases = durClase
         this.precio = precio
         this.estado = estado
     }
