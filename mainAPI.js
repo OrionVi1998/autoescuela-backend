@@ -103,9 +103,13 @@ api.get("/getTurnos/", (req, res) => {
     turnos_retorno.map((t) => {
 
         let alumno = contenedorAlumno.getAlumno({id_alumno: t.alumno_id})
-        let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
+        if (t.usuario_id !== null) {
+            let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
+            t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
+        } else {
+            t.title = `${alumno.nombre} ${alumno.apellido} -> FALTA PROFESOR`
+        }
 
-        t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
 
     })
 
@@ -207,10 +211,8 @@ api.post("/editarProfesor", (req, res) => {
         contenedorTurno.desvincularTrunosIncompatProfesor(req.body)
         contenedorProfesor.editarProfesor(req.body)
         res.send(true)
-
     } catch (e) {
         console.log(e)
-
     }
 
 })

@@ -135,50 +135,49 @@ class ContenedorTurno {
 
         this.turnos.map(t => {
             if (t.usuario_id === profesor.id_usuario) {
-                console.log(profesor, t)
+
+                let tHoraInicio = new Date()
+                tHoraInicio.setHours(
+                    t.fechaHoraInicio.getHours(),
+                    t.fechaHoraInicio.getMinutes(),
+                    0
+                )
 
 
-                let tHoraInicio = t.fechaHoraInicio
-                let tHoraFin = t.fechaHoraFin
-
-                tHoraInicio = new Date(
-                    1,
-                    1,
-                    1,
-                    tHoraInicio.getHours(),
-                    tHoraInicio.getMinutes(),
-                    0)
-
-                tHoraFin = new Date(
-                    1,
-                    1,
-                    1,
-                    tHoraFin.getHours(),
-                    tHoraFin.getMinutes(),
-                    0)
+                let tHoraFin = new Date()
+                tHoraFin.setHours(
+                    t.fechaHoraFin.getHours(),
+                    t.fechaHoraFin.getMinutes(),
+                    0
+                )
 
                 let pDispHoraInicio = profesor.horaInicio.split(":")
                 let pDispHoraFin = profesor.horaFin.split(":")
 
-                pDispHoraInicio = new Date(
-                    1,
-                    1,
-                    1,
-                    Number(pDispHoraInicio[0]),
-                    Number(pDispHoraInicio[1]),
-                    0)
-                pDispHoraFin = new Date(
-                    1,
-                    1,
-                    1,
-                    Number(pDispHoraFin[0]),
-                    Number(pDispHoraFin[1]),
-                    0)
+                pDispHoraInicio = new Date()
+                pDispHoraInicio.setHours(
+                    Number(profesor.horaInicio.split(":")[0]),
+                    Number(profesor.horaInicio.split(":")[1]),
+                    0
+                )
+                pDispHoraFin = new Date()
+                pDispHoraFin.setHours(
+                    Number(profesor.horaFin.split(":")[0]),
+                    Number(profesor.horaFin.split(":")[1]),
+                    0
+                )
 
-                // console.log(pDispHoraInicio.toString(), pDispHoraFin)
-                // console.log(tHoraInicio.toString(), tHoraFin.toString())
+
+
+                // console.log("---")
+                // console.log(pDispHoraInicio.getHours().toString(),pDispHoraInicio.getMinutes().toString())
+                // console.log(tHoraInicio.getHours().toString(),tHoraInicio.getMinutes().toString())
                 // console.log(pDispHoraInicio > tHoraInicio)
+                //
+                // console.log(pDispHoraFin.getHours().toString(),pDispHoraFin.getMinutes().toString())
+                // console.log(tHoraFin.getHours().toString(),tHoraFin.getMinutes().toString())
                 // console.log(pDispHoraFin < tHoraFin)
+                // console.log("---")
 
                 if (pDispHoraInicio > tHoraInicio || pDispHoraFin < tHoraFin) {
 
