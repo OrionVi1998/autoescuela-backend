@@ -203,8 +203,11 @@ api.put("/crearProfesor", (req, res) => {
 api.post("/editarProfesor", (req, res) => {
     console.log(`EDITAR PROFESOR - ${req.body.id_usuario}`)
 
-    try {//TODO
+    try {
         contenedorTurno.desvincularTrunosIncompatProfesor(req.body)
+        contenedorProfesor.editarProfesor(req.body)
+        res.send(true)
+
     } catch (e) {
         console.log(e)
 

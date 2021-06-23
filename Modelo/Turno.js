@@ -182,7 +182,10 @@ class ContenedorTurno {
 
                 if (pDispHoraInicio > tHoraInicio || pDispHoraFin < tHoraFin) {
 
-                    //TODO turno a desvincular
+                    console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
+
+                    t.usuario_id = null
+                    this.editarTurno(t)
 
                 }
             }
