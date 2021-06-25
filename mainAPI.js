@@ -40,51 +40,51 @@ init().then(() => {
 
 
 api.use(cors({
-    "origin": process.env.CORS_ORIGIN, //https://proyecto-autoescuela.web.app/
+    "origin": process.env.CORS_ORIGIN,
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
 api.use(express.json())
 
-api.get("/login", (req, res) => {
+api.get(`/login`, (req, res) => {
     let admin = contenedorAdministrador.getAdministradores()
     let profesor = contenedorProfesor.getProfesores()
 
     admin = admin.find(a => a.email === req.query.email)
     profesor = profesor.find(p => p.email === req.query.email)
 
-    console.log(`LOGIN ATTEMPT: ${req.query.email}`)
+    console.log(`LOGIN ATTEMPT: ${req.query.email} - A: ${admin} - P: ${profesor} `)
 
     if (admin) {res.send({session: true, credencial:admin.credencial})}
-    else if (profesor) {res.send({session: false, credencial:profesor.credencial})}
+    else if (profesor) {res.send({session: true, credencial:profesor.credencial})}
     else {res.send({session:false})}
 
 })
 
-api.get("/", (req, res) => {
-    res.send({value: "Hello postman"})
+api.get(`/`, (req, res) => {
+    res.send({value: `Hello postman`})
 })
 
-api.get("/getPaquetes/", (req, res) => {
+api.get(`/getPaquetes/`, (req, res) => {
     let paquetes_retorno = contenedorPaquete.getPaquetesVisibles()
-    console.log("GET PAQUETES - ENVIANDO")
+    console.log(`GET PAQUETES - ENVIANDO`)
     res.send(paquetes_retorno)
 })
 
-api.get("/getPagos/", (req, res) => {
+api.get(`/getPagos/`, (req, res) => {
     let pagos_retorno = contenedorPagos.getPagos()
-    console.log("GET PAGOS - ENVIANDO")
+    console.log(`GET PAGOS - ENVIANDO`)
     res.send(pagos_retorno)
 })
 
-api.get("/getPagosAlumno", ((req, res) => {
+api.get(`/getPagosAlumno`, ((req, res) => {
     let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(req.query.id_alumno))
     console.log(`GET PAGOS ALUMNO ${req.query.id_alumno} - ENVIANDO`)
     res.send(pagos_alumno_ret)
 }))
 
-api.put("/registrarPago", ((req, res) => {
+api.put(`/registrarPago`, ((req, res) => {
 
     try {
         let pago = contenedorPagos.getPago(req.body.params)
@@ -96,9 +96,9 @@ api.put("/registrarPago", ((req, res) => {
 
 }))
 
-api.get("/getTurnos/", (req, res) => {
+api.get(`/getTurnos/`, (req, res) => {
     let turnos_retorno = contenedorTurno.getTurnos()
-    console.log("GET TURNOS - ENVIANDO")
+    console.log(`GET TURNOS - ENVIANDO`)
 
     turnos_retorno.map((t) => {
 
@@ -116,6 +116,7 @@ api.get("/getTurnos/", (req, res) => {
     res.send(turnos_retorno)
 })
 
+
 api.get("/getTurnosProfesor/", (req, res) => {
     console.log(`GET TURNOS PROFESOR - ${req.query.usuario_id}`)
     let turnos_retorno = contenedorTurno.getTurnosProfesor(req.query)
@@ -124,18 +125,17 @@ api.get("/getTurnosProfesor/", (req, res) => {
 
 api.get("/getAlumnos/", (req, res) => {
     let alumnos_retorno = contenedorAlumno.getAlumnos()
-    console.log("GET ALUMNOS - ENVIANDO")
+    console.log(`GET ALUMNOS - ENVIANDO`)
     res.send(alumnos_retorno)
 })
 
-
-api.get("/getAdministradores/", (req, res) => {
+api.get(`/getAdministradores/`, (req, res) => {
     let administradores_retorno = contenedorAdministrador.getAdministradores()
-    console.log("GET ADMINISTRADORES")
+    console.log(`GET ADMINISTRADORES`)
     res.send(administradores_retorno)
 })
 
-api.put("/crearAlumno/", (req, res) => {
+api.put(`/crearAlumno/`, (req, res) => {
     //
     console.log(req.body) // objeto json con el alumno
     let nombre, apellido, telefono, direccion;
@@ -217,6 +217,7 @@ api.post("/editarProfesor", (req, res) => {
 
 })
 
+
 api.delete("/eliminarProfesor", (req, res) => {
     console.log(`ELIMINAR PROFESOR - ${req.query.id_usuario}`)
 
@@ -230,5 +231,4 @@ api.delete("/eliminarProfesor", (req, res) => {
     }catch (e) {
         console.log(e)
     }
-
 })
