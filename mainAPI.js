@@ -103,25 +103,30 @@ api.get(`/getTurnos/`, (req, res) => {
     turnos_retorno.map((t) => {
 
         let alumno = contenedorAlumno.getAlumno({id_alumno: t.alumno_id})
-        let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
+        if (t.usuario_id !== null) {
+            let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
+            t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
+        } else {
+            t.title = `${alumno.nombre} ${alumno.apellido} -> FALTA PROFESOR`
+        }
 
-        t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
 
     })
 
     res.send(turnos_retorno)
 })
 
-api.get(`/getAlumnos/`, (req, res) => {
+
+api.get("/getTurnosProfesor/", (req, res) => {
+    console.log(`GET TURNOS PROFESOR - ${req.query.usuario_id}`)
+    let turnos_retorno = contenedorTurno.getTurnosProfesor(req.query)
+    res.send(turnos_retorno)
+})
+
+api.get("/getAlumnos/", (req, res) => {
     let alumnos_retorno = contenedorAlumno.getAlumnos()
     console.log(`GET ALUMNOS - ENVIANDO`)
     res.send(alumnos_retorno)
-})
-
-api.get(`/getProfesores/`, (req, res) => {
-    let profesores_retorno = contenedorProfesor.getProfesores()
-    console.log(`GET PROFESORES - ENVIANDO`)
-    res.send(profesores_retorno)
 })
 
 api.get(`/getAdministradores/`, (req, res) => {
@@ -162,6 +167,8 @@ api.delete("/eliminarAlumno/", (req, res) => {
 
     console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
 
+    //TODO: Posible eliminar?
+
     try {
         contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)})
         res.send(true)
@@ -171,10 +178,57 @@ api.delete("/eliminarAlumno/", (req, res) => {
 
 })
 
+api.get("/getProfesores/", (req, res) => {
+    let profesores_retorno = contenedorProfesor.getProfesores()
+    console.log("GET PROFESORES - ENVIANDO")
+    res.send(profesores_retorno)
+})
+
+api.put("/crearProfesor", (req, res) => {
+    console.log(`CREAR_PROFESOR - ${req.body}`) // objeto json con el profesor
+    try {
+        contenedorProfesor.crearProfesor(
+            req.body.email,
+            req.body.nombre,
+            req.body.apellido,
+            req.body.telefono,
+            req.body.direccion,
+            req.body.horaInicio,
+            req.body.horaFin
+        )
+
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+api.post("/editarProfesor", (req, res) => {
+    console.log(`EDITAR PROFESOR - ${req.body.id_usuario}`)
+
+    try {
+        contenedorTurno.desvincularTrunosIncompatProfesor(req.body)
+        contenedorProfesor.editarProfesor(req.body)
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
 
 
-api.delete(`/eliminarProfesor`, (req, res) => {
-    let profesores_eliminar = req.body // {nombres ...}
-    // contenedorProfesor.eliminarProfesor(profesores_eliminar)
-    // contenedorTurno.desvincularProfesor(profesores_eliminar)
+api.delete("/eliminarProfesor", (req, res) => {
+    console.log(`ELIMINAR PROFESOR - ${req.query.id_usuario}`)
+
+    req.query.id_usuario = Number(req.query.id_usuario)
+
+    let profesores_eliminar = contenedorProfesor.getProfesor(req.query) // {nombres ...}
+    try {
+        contenedorProfesor.eliminarProfesor(profesores_eliminar)
+        contenedorTurno.desvincularProfesor(profesores_eliminar)
+        res.send(true)
+    }catch (e) {
+        console.log(e)
+    }
 })
