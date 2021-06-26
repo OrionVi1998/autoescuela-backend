@@ -143,7 +143,6 @@ api.get("/getTurnosProfesor/", (req, res) => {
 })
 
 api.get("/getAlumnos/", (req, res) => {
->>>>>>> edf8a6ad2e48902f9b5980b66ff9e3802ede971b
     let alumnos_retorno = contenedorAlumno.getAlumnos()
     console.log(`GET ALUMNOS - ENVIANDO`)
     res.send(alumnos_retorno)
