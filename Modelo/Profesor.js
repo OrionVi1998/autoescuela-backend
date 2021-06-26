@@ -58,8 +58,9 @@ class ContenedorProfesor {
             horaInicio,
             horaFin
         )
-        Storebroker.crearProfesor(p_nuevo).then(r => {
-            p_nuevo.id_usuario = r
+
+        Storebroker.crearProfesor(p_nuevo).then(id_retornada => {
+            p_nuevo.id_usuario = id_retornada
             this.profesores.push(p_nuevo)
         })
 
