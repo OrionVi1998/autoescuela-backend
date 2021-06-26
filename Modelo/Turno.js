@@ -41,6 +41,11 @@ class ContenedorTurno {
     }
 
 
+    getTurnosProfesor(profesor) {
+        return this.turnos.filter(t => t.usuario_id === profesor.id_usuario)
+    }
+
+
     crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente) {
 
         let tur = new Turno(
@@ -137,6 +142,68 @@ class ContenedorTurno {
                 return t
             }
         })
+    }
+
+
+    desvincularTrunosIncompatProfesor(profesor) {
+
+        this.turnos.map(t => {
+            if (t.usuario_id === profesor.id_usuario) {
+
+                let tHoraInicio = new Date()
+                tHoraInicio.setHours(
+                    t.fechaHoraInicio.getHours(),
+                    t.fechaHoraInicio.getMinutes(),
+                    0
+                )
+
+
+                let tHoraFin = new Date()
+                tHoraFin.setHours(
+                    t.fechaHoraFin.getHours(),
+                    t.fechaHoraFin.getMinutes(),
+                    0
+                )
+
+                let pDispHoraInicio = profesor.horaInicio.split(":")
+                let pDispHoraFin = profesor.horaFin.split(":")
+
+                pDispHoraInicio = new Date()
+                pDispHoraInicio.setHours(
+                    Number(profesor.horaInicio.split(":")[0]),
+                    Number(profesor.horaInicio.split(":")[1]),
+                    0
+                )
+                pDispHoraFin = new Date()
+                pDispHoraFin.setHours(
+                    Number(profesor.horaFin.split(":")[0]),
+                    Number(profesor.horaFin.split(":")[1]),
+                    0
+                )
+
+
+
+                // console.log("---")
+                // console.log(pDispHoraInicio.getHours().toString(),pDispHoraInicio.getMinutes().toString())
+                // console.log(tHoraInicio.getHours().toString(),tHoraInicio.getMinutes().toString())
+                // console.log(pDispHoraInicio > tHoraInicio)
+                //
+                // console.log(pDispHoraFin.getHours().toString(),pDispHoraFin.getMinutes().toString())
+                // console.log(tHoraFin.getHours().toString(),tHoraFin.getMinutes().toString())
+                // console.log(pDispHoraFin < tHoraFin)
+                // console.log("---")
+
+                if (pDispHoraInicio > tHoraInicio || pDispHoraFin < tHoraFin) {
+
+                    console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
+
+                    t.usuario_id = null
+                    this.editarTurno(t)
+
+                }
+            }
+        })
+
     }
 
 
