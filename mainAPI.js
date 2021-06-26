@@ -116,6 +116,25 @@ api.get(`/getTurnos/`, (req, res) => {
     res.send(turnos_retorno)
 })
 
+api.put(`/crearTurno/`, (req, res) => {
+    //
+    console.log(req.body) // objeto json con el turno
+    let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
+    ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
+
+    try {
+        contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1)
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.get(`/getAlumnos/`, (req, res) => {
+    let alumnos_retorno = contenedorAlumno.getAlumnos()
+    console.log(`GET ALUMNOS - ENVIANDO`)
+    res.send(alumnos_retorno)
+})
 
 api.get("/getTurnosProfesor/", (req, res) => {
     console.log(`GET TURNOS PROFESOR - ${req.query.usuario_id}`)
