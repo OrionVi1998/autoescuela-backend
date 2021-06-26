@@ -181,11 +181,11 @@ api.delete(`/eliminarProfesor`, (req, res) => {
 
 api.put("/crearPaquete/", (req, res) => {
     console.log(req.body)
-    let nombre, precio, cantClases, durClases;
-    ({nombre, precio, cantClases, durClases} = req.body)
+    let nombre, cantClases, durClases, precio;
+    ({nombre, cantClases, durClases, precio} = req.body)
 
     try {
-        contenedorPaquete.crearPaquete(nombre, Number(precio), Number(cantClases), Number(durClases))
+        contenedorPaquete.crearPaquete(nombre, Number(cantClases), Number(durClases), Number(precio))
         res.send(true)
     } catch (e) {
         console.log(e)

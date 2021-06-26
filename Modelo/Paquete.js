@@ -45,7 +45,7 @@ class ContenedorPaquete {
     }
 
 
-    crearPaquete(nombre, cantClases, durClases, precio, estado) {
+    crearPaquete(nombre, cantClases, durClases, precio) {
 
         let paq = new Paquete(
             9999,
@@ -53,7 +53,7 @@ class ContenedorPaquete {
             cantClases,
             durClases,
             precio,
-            estado
+            1
         );
 
         Storebroker.crearPaquete(paq).then(r => {
