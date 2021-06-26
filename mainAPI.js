@@ -116,7 +116,6 @@ api.get(`/getTurnos/`, (req, res) => {
     res.send(turnos_retorno)
 })
 
-<<<<<<< HEAD
 api.put(`/crearTurno/`, (req, res) => {
     //
     console.log(req.body) // objeto json con el turno
@@ -132,7 +131,10 @@ api.put(`/crearTurno/`, (req, res) => {
 })
 
 api.get(`/getAlumnos/`, (req, res) => {
-=======
+    let alumnos_retorno = contenedorAlumno.getAlumnos()
+    console.log(`GET ALUMNOS - ENVIANDO`)
+    res.send(alumnos_retorno)
+})
 
 api.get("/getTurnosProfesor/", (req, res) => {
     console.log(`GET TURNOS PROFESOR - ${req.query.usuario_id}`)
