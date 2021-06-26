@@ -57,8 +57,22 @@ class ContenedorTurno {
             profesorPresente
         );
 
-        // chequeamos si el profesor esta disponible
-        if (Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, (tur.fechaHoraInicio - tur.fechaHoraFin))) {
+        let disponib = getTurnosProfesor({tur.usuario_id}).map(t => {
+
+            // preguntamos si el profesor atiende en este horario
+            if !(Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, Number(tur.fechaHoraInicio - tur.fechaHoraFin)) {
+                return false
+
+            } else {
+
+                // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+                if !(tur.verificarCompatHoraria(t)) {
+                    return false
+                }
+            }
+        })
+
+        if (disponib) {
 
             Storebroker.crearTurno(tur).then(r => {
                 tur.id_turno = r
@@ -69,8 +83,6 @@ class ContenedorTurno {
         } else {
             console.log("el profesor no se encuentra disponible")
         }
-
-        console.log("tur:", tur)
 
 
     }
@@ -250,8 +262,11 @@ class Turno {
         if (reservaThisTurnoInicio.getTime() === reservaTurnoInicio.getTime()) {
             return false;
 
-        } else if (reservaThisTurnoFin.getTime() < reservaTurnoFin.getTime() &&
-            reservaThisTurnoFin.getTime() > reservaTurnoInicio.getTime()) { // si el primer turno termina luego de que el segundo inicia
+        }
+
+        // si el primer turno termina luego de que el segundo inicia
+        else if (reservaThisTurnoFin.getTime() < reservaTurnoFin.getTime() &&
+            reservaThisTurnoFin.getTime() > reservaTurnoInicio.getTime()) {
             return false;
 
         } else {
@@ -322,7 +337,8 @@ class Turno {
             0)
 
         } else {
-            return null
+            // si fechaHoraString no contiene un espacio o una 'T' probablemente no sea un String, sino un Date
+            return fechaHoraString
         }
 
     }
