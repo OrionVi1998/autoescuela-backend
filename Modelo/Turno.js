@@ -57,20 +57,22 @@ class ContenedorTurno {
             profesorPresente
         );
 
-        let disponib = getTurnosProfesor({tur.usuario_id}).map(t => {
+        let disponib = true
 
-            // preguntamos si el profesor atiende en este horario
-            if !(Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, Number(tur.fechaHoraInicio - tur.fechaHoraFin)) {
-                return false
+        // preguntamos si el profesor atiende en este horario
+        if (!(Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, Number(tur.fechaHoraInicio - tur.fechaHoraFin))) {
+            disponib = false
+        }
 
-            } else {
+        // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+        let superposicionTurno = getTurnosProfesor({tur.usuario_id}).map(t => {
 
                 // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
                 if !(tur.verificarCompatHoraria(t)) {
-                    return false
+                    disponibHoraria = false
                 }
-            }
         })
+
 
         if (disponib) {
 
