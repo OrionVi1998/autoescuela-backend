@@ -1,5 +1,4 @@
 const Storebroker = require('./storebroker')
-const Profesores = require('./Profesor')
 
 class ContenedorTurno {
 
@@ -59,18 +58,13 @@ class ContenedorTurno {
 
         let disponib = true
 
-        // preguntamos si el profesor atiende en este horario
-        if (!(Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, Number(tur.fechaHoraInicio - tur.fechaHoraFin))) {
-            disponib = false
-        }
-
         // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
-        let superposicionTurno = getTurnosProfesor({tur.usuario_id}).map(t => {
+        this.getTurnosProfesor({id_usuario: tur.usuario_id}).map(t => {
 
-                // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
-                if !(tur.verificarCompatHoraria(t)) {
-                    disponibHoraria = false
-                }
+            // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+            if (!(tur.verificarCompatHoraria(t))) {
+                disponibHoraria = false
+            }
         })
 
 
@@ -250,30 +244,20 @@ class Turno {
 
     verificarCompatHoraria(turno) {
 
-        /* Primero construimos los objetos Date
-         * asi podemos acceder a la funcionalidad de comparacion
-         */
-        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
-        let reservaTurnoFin = Turno.convertirFechaStringADate(turno.fechaHoraFin)
-
-        let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
-        let reservaThisTurnoFin = Turno.convertirFechaStringADate(this.fechaHoraFin)
-        /* Terminamos de construir */
-
-        // si tienen el mismo DateTime, entonces no se puede reservar el turno
-        if (reservaThisTurnoInicio.getTime() === reservaTurnoInicio.getTime()) {
+        // si tienen el mismo `datetime`, entonces no se puede reservar el turno
+        if (this.fechaHoraInicio.getTime() === turno.fechaHoraInicio.getTime()) {
             return false;
-
         }
 
         // si el primer turno termina luego de que el segundo inicia
-        else if (reservaThisTurnoFin.getTime() < reservaTurnoFin.getTime() &&
-            reservaThisTurnoFin.getTime() > reservaTurnoInicio.getTime()) {
+        else if (this.fechaHoraFin.getTime() < turno.fechaHoraFin.getTime() &&
+                 this.fechaHoraFin.getTime() > turno.fechaHoraInicio.getTime()) {
             return false;
 
         } else {
             return true;
         }
+
     }
 
 
