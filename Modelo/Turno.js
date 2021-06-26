@@ -1,4 +1,5 @@
 const Storebroker = require('./storebroker')
+const Profesores = require('./Profesor')
 
 class ContenedorTurno {
 
@@ -46,16 +47,27 @@ class ContenedorTurno {
             500,
             alumno_id,
             usuario_id,
-            fechaHoraInicio,
-            fechaHoraFin,
+            Turno.convertirFechaStringADate(fechaHoraInicio),
+            Turno.convertirFechaStringADate(fechaHoraFin),
             profesorPresente
         );
 
-        Storebroker.crearTurno(tur).then(r => {
-            tur.id_turno = r
-            this.turnos.push(tur)
-            console.log(tur.id_turno)
-        })
+        // chequeamos si el profesor esta disponible
+        if (Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, (tur.fechaHoraInicio - tur.fechaHoraFin))) {
+
+            Storebroker.crearTurno(tur).then(r => {
+                tur.id_turno = r
+                this.turnos.push(tur)
+                console.log(tur.id_turno)
+            })
+
+        } else {
+            console.log("el profesor no se encuentra disponible")
+        }
+
+        console.log("tur:", tur)
+
+
     }
 
 
@@ -133,7 +145,6 @@ class ContenedorTurno {
         return this.turnos.filter(t => t.alumno_id === alumno.id_alumno).length !== 0
     }
 
-
 }
 
 
@@ -205,21 +216,49 @@ class Turno {
 
     static convertirFechaStringADate(fechaHoraString) {
 
-        let datetimeTurno = fechaHoraString.split(' ')
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let dateTurno = datetimeTurno[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeTurno = datetimeTurno[1]
+        if (fechaHoraString.includes(" ")) {
 
-        // construimos el objeto de Date
-        return new Date(dateTurno.split('-')[0],
-            dateTurno.split('-')[1],
-            dateTurno.split('-')[2],
-            timeTurno.split(':')[0],
-            timeTurno.split(':')[1],
-           0)
+            // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
+            let datetimeTurno = fechaHoraString.split(' ')
+            // agarramos la parte 'date' que seria YY-MM-dd
+            let dateTurno = datetimeTurno[0]
+            // agarramos la parte 'time' que seria HH:mm:ss
+            let timeTurno = datetimeTurno[1]
+
+            // construimos el objeto de Date forzando la conversion a Number
+            // el -3 es para pasar el horario a GMT-3
+            // el -1 es porque para Javascript, los indices de los meses empiezan en 0
+            return new Date(Number(dateTurno.split('-')[0]),
+                            Number(dateTurno.split('-')[1])-1,
+                            Number(dateTurno.split('-')[2]),
+                            Number(timeTurno.split(':')[0])-3,
+                            Number(timeTurno.split(':')[1]),
+            0)
+
+        } else if (fechaHoraString.includes("T")) {
+
+            // separamos el string "YY-MM-ddTHH:mm:ss" en dos por la T
+            let datetimeTurno = fechaHoraString.split('T')
+            // agarramos la parte 'date' que seria YY-MM-dd
+            let dateTurno = datetimeTurno[0]
+            // agarramos la parte 'time' que seria HH:mm:ss
+            let timeTurno = datetimeTurno[1]
+
+            // construimos el objeto de Date forzando la conversion a Number
+            // el -3 es para pasar el horario a GMT-3
+            // el -1 es porque para Javascript, los indices de los meses empiezan en 0
+            return new Date(Number(dateTurno.split('-')[0]),
+                            Number(dateTurno.split('-')[1])-1,
+                            Number(dateTurno.split('-')[2]),
+                            Number(timeTurno.split(':')[0])-3,
+                            Number(timeTurno.split(':')[1]),
+            0)
+
+        } else {
+            return null
+        }
+
     }
-
 }
 
 
