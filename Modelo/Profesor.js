@@ -133,14 +133,15 @@ class Profesor extends Usuario {
 
             console.log(hI < hCI && hCF < hF)
 
-            // Check Turnos
-            // Si turno overlap -> False
-            // Else True
+            // aca solo chequeamos si tiene disponibilidad horaria
+            // el trabajo de chequear si tiene turnos en este horario seria de turnos
+            return true;
 
         } else {
             return false
         }
     }
+
 }
 
 
