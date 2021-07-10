@@ -123,8 +123,21 @@ api.put(`/crearTurno/`, (req, res) => {
     ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
     try {
-        contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1)
-        res.send(true)
+
+        let duracionClase = ((Number(Turno.convertirFechaStringADate(fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(fechaHoraInicio).getTime())) / 60000)
+
+        // patron de mediador
+        if (contenedorProfesor.getProfesor({id_usuario: usuario_id}).verificarDispHoraria(Turno.convertirFechaStringADate(fechaHoraInicio), duracionClase)) {
+
+            // devolvemos la respuesta de la creacion de turno, "true" o "false"
+            res.send(contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1))
+
+        } else {
+
+            // si no hay disponibilidad horaria del profesor, devolvemos false
+            res.send(false)
+        }
+
     } catch (e) {
         console.log(e)
     }

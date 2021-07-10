@@ -1,5 +1,4 @@
 const Storebroker = require('./storebroker')
-const Profesores = require('./Profesor')
 
 class ContenedorTurno {
 
@@ -57,20 +56,33 @@ class ContenedorTurno {
             profesorPresente
         );
 
-        // chequeamos si el profesor esta disponible
-        if (Profesores.getProfesor({tur.usuario_id}).verificarDispHoraria(tur.fechaHoraInicio, (tur.fechaHoraInicio - tur.fechaHoraFin))) {
+        console.log(tur)
+
+        let disponib = true
+
+        // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+        this.getTurnosProfesor({id_usuario: tur.usuario_id}).map(t => {
+
+            // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+            if (!(tur.verificarCompatHoraria(t))) {
+                disponib = false
+            }
+        })
+
+
+        if (disponib) {
 
             Storebroker.crearTurno(tur).then(r => {
                 tur.id_turno = r
                 this.turnos.push(tur)
-                console.log(tur.id_turno)
+                // console.log(tur.id_turno)
             })
 
-        } else {
-            console.log("el profesor no se encuentra disponible")
-        }
+            return true
 
-        console.log("tur:", tur)
+        } else {
+            return false
+        }
 
 
     }
@@ -236,27 +248,20 @@ class Turno {
 
     verificarCompatHoraria(turno) {
 
-        /* Primero construimos los objetos Date
-         * asi podemos acceder a la funcionalidad de comparacion
-         */
-        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
-        let reservaTurnoFin = Turno.convertirFechaStringADate(turno.fechaHoraFin)
-
-        let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
-        let reservaThisTurnoFin = Turno.convertirFechaStringADate(this.fechaHoraFin)
-        /* Terminamos de construir */
-
-        // si tienen el mismo DateTime, entonces no se puede reservar el turno
-        if (reservaThisTurnoInicio.getTime() === reservaTurnoInicio.getTime()) {
+        // si tienen el mismo `datetime`, entonces no se puede reservar el turno
+        if (this.fechaHoraInicio.getTime() === turno.fechaHoraInicio.getTime()) {
             return false;
+        }
 
-        } else if (reservaThisTurnoFin.getTime() < reservaTurnoFin.getTime() &&
-            reservaThisTurnoFin.getTime() > reservaTurnoInicio.getTime()) { // si el primer turno termina luego de que el segundo inicia
+        // si el primer turno termina luego de que el segundo inicia
+        else if (this.fechaHoraFin.getTime() < turno.fechaHoraFin.getTime() &&
+                 this.fechaHoraFin.getTime() > turno.fechaHoraInicio.getTime()) {
             return false;
 
         } else {
             return true;
         }
+
     }
 
 
@@ -322,7 +327,8 @@ class Turno {
             0)
 
         } else {
-            return null
+            // si fechaHoraString no contiene un espacio o una 'T' probablemente no sea un String, sino un Date
+            return fechaHoraString
         }
 
     }
