@@ -56,8 +56,8 @@ api.get(`/login`, (req, res) => {
 
     console.log(`LOGIN ATTEMPT: ${req.query.email} - A: ${admin} - P: ${profesor} `)
 
-    if (admin) {res.send({session: true, credencial:admin.credencial})}
-    else if (profesor) {res.send({session: true, credencial:profesor.credencial})}
+    if (admin) {res.send({session: true, credencial:admin.credencial, user: admin})}
+    else if (profesor) {res.send({session: true, credencial:profesor.credencial, user: profesor})}
     else {res.send({session:false})}
 
 })
