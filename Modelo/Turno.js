@@ -56,6 +56,8 @@ class ContenedorTurno {
             profesorPresente
         );
 
+        console.log(tur)
+
         let disponib = true
 
         // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
@@ -63,7 +65,7 @@ class ContenedorTurno {
 
             // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
             if (!(tur.verificarCompatHoraria(t))) {
-                disponibHoraria = false
+                disponib = false
             }
         })
 
@@ -73,11 +75,13 @@ class ContenedorTurno {
             Storebroker.crearTurno(tur).then(r => {
                 tur.id_turno = r
                 this.turnos.push(tur)
-                console.log(tur.id_turno)
+                // console.log(tur.id_turno)
             })
 
+            return true
+
         } else {
-            console.log("el profesor no se encuentra disponible")
+            return false
         }
 
 
