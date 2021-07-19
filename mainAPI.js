@@ -45,6 +45,7 @@ api.use(cors({
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
+
 api.use(express.json())
 
 api.get(`/login`, (req, res) => {
@@ -124,6 +125,7 @@ api.put(`/crearTurno/`, (req, res) => {
 
     try {
 
+        // El " / 60000" es para convertir de milisegundos a minutos.
         let duracionClase = ((Number(Turno.convertirFechaStringADate(fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(fechaHoraInicio).getTime())) / 60000)
 
         // patron de mediador
@@ -138,6 +140,15 @@ api.put(`/crearTurno/`, (req, res) => {
             res.send(false)
         }
 
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.post(`/editarTurno/`, (req, res) => {
+
+    try {
+        res.send(contenedorTurno.editarTurno(req.body))
     } catch (e) {
         console.log(e)
     }
