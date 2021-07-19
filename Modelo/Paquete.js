@@ -1,6 +1,5 @@
 const Storebroker = require('./storebroker')
 
-
 class ContenedorPaquete {
     paquetes;
 
@@ -74,6 +73,7 @@ class ContenedorPaquete {
                 }
             }
         );
+
     }
 
     eliminarPaquete(paquete) {
