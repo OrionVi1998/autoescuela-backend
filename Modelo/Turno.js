@@ -92,13 +92,17 @@ class ContenedorTurno {
 
         Storebroker.editarTurno(turno)
 
+        let editadoConExito = false
         this.turnos = this.turnos.map(t => {
             if (t.id_turno === turno.id_turno) {
+                editadoConExito = true
                 return turno
             } else {
                 return t
             }
         });
+
+        return editadoConExito
     }
 
 
