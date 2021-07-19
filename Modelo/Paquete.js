@@ -64,7 +64,11 @@ class ContenedorPaquete {
     }
 
     editarPaquete(paquete) {
+
         Storebroker.editarPaquete(paquete)
+
+        let editadoConExito = false
+
         this.paquetes = this.paquetes.map(p => {
                 if (p.id_paquete === paquete.id_paquete) {
                     return paquete
@@ -73,6 +77,8 @@ class ContenedorPaquete {
                 }
             }
         );
+
+        return editadoConExito
 
     }
 

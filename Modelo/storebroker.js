@@ -208,8 +208,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, durClases=?, precio=?, estado=? WHERE ID_PAQUETE=?",
-                [paquete.nombre, paquete.cantClases, paquete.durClases, paquete.precio, paquete.estado, paquete.id_paquete]);
+            const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, durClases=?, precio=? WHERE ID_PAQUETE=?",
+                [paquete.nombre, paquete.cantClases, paquete.durClases, paquete.precio, paquete.id_paquete]);
             console.log(rows); // TODO
 
         } catch (err) {
