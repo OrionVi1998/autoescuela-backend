@@ -171,49 +171,10 @@ api.delete("/eliminarAlumno/", (req, res) => {
 
 })
 
+
+
 api.delete(`/eliminarProfesor`, (req, res) => {
     let profesores_eliminar = req.body // {nombres ...}
     // contenedorProfesor.eliminarProfesor(profesores_eliminar)
     // contenedorTurno.desvincularProfesor(profesores_eliminar)
-})
-
-api.put("/crearPaquete/", (req, res) => {
-    console.log(req.body)
-    let nombre, cantClases, durClases, precio;
-    ({nombre, cantClases, durClases, precio} = req.body)
-
-    try {
-        contenedorPaquete.crearPaquete(nombre, Number(cantClases), Number(durClases), Number(precio))
-        res.send(true)
-    } catch (e) {
-        console.log(e)
-    }
-
-})
-
-
-api.post("/editarPaquete/", (req, res) => {
-
-    console.log(`EDITAR PAQUETE - ${req.body.id_paquete}`)
-
-    try {
-        contenedorPaquete.editarPaquete(req.body.id_paquete)
-        res.send(true)
-    } catch (e) {
-        console.log(e)
-    }
-
-})
-
-api.delete("/eliminarPaquete/", (req, res) => {
-
-    console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
-
-    try {
-        contenedorPaquete.eliminarPaquete({id_paquete: Number(req.query.id_paquete)})
-        res.send(true)
-    } catch (e) {
-        console.log(e)
-    }
-
 })

@@ -40,22 +40,51 @@ class ContenedorTurno {
     }
 
 
+    getTurnosProfesor(profesor) {
+        return this.turnos.filter(t => t.usuario_id === profesor.id_usuario)
+    }
+
+
     crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente) {
 
         let tur = new Turno(
             500,
             alumno_id,
             usuario_id,
-            fechaHoraInicio,
-            fechaHoraFin,
+            Turno.convertirFechaStringADate(fechaHoraInicio),
+            Turno.convertirFechaStringADate(fechaHoraFin),
             profesorPresente
         );
 
-        Storebroker.crearTurno(tur).then(r => {
-            tur.id_turno = r
-            this.turnos.push(tur)
-            console.log(tur.id_turno)
+        console.log(tur)
+
+        let disponib = true
+
+        // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+        this.getTurnosProfesor({id_usuario: tur.usuario_id}).map(t => {
+
+            // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+            if (!(tur.verificarCompatHoraria(t))) {
+                disponib = false
+            }
         })
+
+
+        if (disponib) {
+
+            Storebroker.crearTurno(tur).then(r => {
+                tur.id_turno = r
+                this.turnos.push(tur)
+                // console.log(tur.id_turno)
+            })
+
+            return true
+
+        } else {
+            return false
+        }
+
+
     }
 
 
@@ -128,11 +157,72 @@ class ContenedorTurno {
     }
 
 
+    desvincularTrunosIncompatProfesor(profesor) {
+
+        this.turnos.map(t => {
+            if (t.usuario_id === profesor.id_usuario) {
+
+                let tHoraInicio = new Date()
+                tHoraInicio.setHours(
+                    t.fechaHoraInicio.getHours(),
+                    t.fechaHoraInicio.getMinutes(),
+                    0
+                )
+
+
+                let tHoraFin = new Date()
+                tHoraFin.setHours(
+                    t.fechaHoraFin.getHours(),
+                    t.fechaHoraFin.getMinutes(),
+                    0
+                )
+
+                let pDispHoraInicio = profesor.horaInicio.split(":")
+                let pDispHoraFin = profesor.horaFin.split(":")
+
+                pDispHoraInicio = new Date()
+                pDispHoraInicio.setHours(
+                    Number(profesor.horaInicio.split(":")[0]),
+                    Number(profesor.horaInicio.split(":")[1]),
+                    0
+                )
+                pDispHoraFin = new Date()
+                pDispHoraFin.setHours(
+                    Number(profesor.horaFin.split(":")[0]),
+                    Number(profesor.horaFin.split(":")[1]),
+                    0
+                )
+
+
+
+                // console.log("---")
+                // console.log(pDispHoraInicio.getHours().toString(),pDispHoraInicio.getMinutes().toString())
+                // console.log(tHoraInicio.getHours().toString(),tHoraInicio.getMinutes().toString())
+                // console.log(pDispHoraInicio > tHoraInicio)
+                //
+                // console.log(pDispHoraFin.getHours().toString(),pDispHoraFin.getMinutes().toString())
+                // console.log(tHoraFin.getHours().toString(),tHoraFin.getMinutes().toString())
+                // console.log(pDispHoraFin < tHoraFin)
+                // console.log("---")
+
+                if (pDispHoraInicio > tHoraInicio || pDispHoraFin < tHoraFin) {
+
+                    console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
+
+                    t.usuario_id = null
+                    this.editarTurno(t)
+
+                }
+            }
+        })
+
+    }
+
+
     tieneTurnosRestantes(alumno) {
 
         return this.turnos.filter(t => t.alumno_id === alumno.id_alumno).length !== 0
     }
-
 
 }
 
@@ -158,27 +248,20 @@ class Turno {
 
     verificarCompatHoraria(turno) {
 
-        /* Primero construimos los objetos Date
-         * asi podemos acceder a la funcionalidad de comparacion
-         */
-        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
-        let reservaTurnoFin = Turno.convertirFechaStringADate(turno.fechaHoraFin)
-
-        let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
-        let reservaThisTurnoFin = Turno.convertirFechaStringADate(this.fechaHoraFin)
-        /* Terminamos de construir */
-
-        // si tienen el mismo DateTime, entonces no se puede reservar el turno
-        if (reservaThisTurnoInicio.getTime() === reservaTurnoInicio.getTime()) {
+        // si tienen el mismo `datetime`, entonces no se puede reservar el turno
+        if (this.fechaHoraInicio.getTime() === turno.fechaHoraInicio.getTime()) {
             return false;
+        }
 
-        } else if (reservaThisTurnoFin.getTime() < reservaTurnoFin.getTime() &&
-            reservaThisTurnoFin.getTime() > reservaTurnoInicio.getTime()) { // si el primer turno termina luego de que el segundo inicia
+        // si el primer turno termina luego de que el segundo inicia
+        else if (this.fechaHoraFin.getTime() < turno.fechaHoraFin.getTime() &&
+                 this.fechaHoraFin.getTime() > turno.fechaHoraInicio.getTime()) {
             return false;
 
         } else {
             return true;
         }
+
     }
 
 
@@ -205,21 +288,50 @@ class Turno {
 
     static convertirFechaStringADate(fechaHoraString) {
 
-        let datetimeTurno = fechaHoraString.split(' ')
-        // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let dateTurno = datetimeTurno[0]
-        // agarramos la parte 'time' que seria HH:mm:ss
-        let timeTurno = datetimeTurno[1]
+        if (fechaHoraString.includes(" ")) {
 
-        // construimos el objeto de Date
-        return new Date(dateTurno.split('-')[0],
-            dateTurno.split('-')[1],
-            dateTurno.split('-')[2],
-            timeTurno.split(':')[0],
-            timeTurno.split(':')[1],
-           0)
+            // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
+            let datetimeTurno = fechaHoraString.split(' ')
+            // agarramos la parte 'date' que seria YY-MM-dd
+            let dateTurno = datetimeTurno[0]
+            // agarramos la parte 'time' que seria HH:mm:ss
+            let timeTurno = datetimeTurno[1]
+
+            // construimos el objeto de Date forzando la conversion a Number
+            // el -3 es para pasar el horario a GMT-3
+            // el -1 es porque para Javascript, los indices de los meses empiezan en 0
+            return new Date(Number(dateTurno.split('-')[0]),
+                            Number(dateTurno.split('-')[1])-1,
+                            Number(dateTurno.split('-')[2]),
+                            Number(timeTurno.split(':')[0])-3,
+                            Number(timeTurno.split(':')[1]),
+            0)
+
+        } else if (fechaHoraString.includes("T")) {
+
+            // separamos el string "YY-MM-ddTHH:mm:ss" en dos por la T
+            let datetimeTurno = fechaHoraString.split('T')
+            // agarramos la parte 'date' que seria YY-MM-dd
+            let dateTurno = datetimeTurno[0]
+            // agarramos la parte 'time' que seria HH:mm:ss
+            let timeTurno = datetimeTurno[1]
+
+            // construimos el objeto de Date forzando la conversion a Number
+            // el -3 es para pasar el horario a GMT-3
+            // el -1 es porque para Javascript, los indices de los meses empiezan en 0
+            return new Date(Number(dateTurno.split('-')[0]),
+                            Number(dateTurno.split('-')[1])-1,
+                            Number(dateTurno.split('-')[2]),
+                            Number(timeTurno.split(':')[0])-3,
+                            Number(timeTurno.split(':')[1]),
+            0)
+
+        } else {
+            // si fechaHoraString no contiene un espacio o una 'T' probablemente no sea un String, sino un Date
+            return fechaHoraString
+        }
+
     }
-
 }
 
 
