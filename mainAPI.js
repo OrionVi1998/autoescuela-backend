@@ -197,7 +197,7 @@ api.post("/editarPaquete/", (req, res) => {
     console.log(`EDITAR PAQUETE - ${req.body.id_paquete}`)
 
     try {
-        contenedorPaquete.editarPaquete(req.body)
+        contenedorPaquete.editarPaquete(req.body.id_paquete)
         res.send(true)
     } catch (e) {
         console.log(e)
