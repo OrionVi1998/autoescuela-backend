@@ -118,8 +118,8 @@ api.get(`/getTurnos/`, (req, res) => {
 })
 
 api.put(`/crearTurno/`, (req, res) => {
-    //
-    console.log(req.body) // objeto json con el turno
+
+    //console.log("mainapi crear:", req.body) // objeto json con el turno
     let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
     ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
@@ -148,7 +148,18 @@ api.put(`/crearTurno/`, (req, res) => {
 api.post(`/editarTurno/`, (req, res) => {
 
     try {
+        console.log("mainapi editar:", req.body)
         res.send(contenedorTurno.editarTurno(req.body))
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.delete("/eliminarTurno/", (req, res) => {
+
+    try {
+        console.log("mainapi eliminar:", req.query)
+        res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
         console.log(e)
     }
