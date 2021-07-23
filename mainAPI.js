@@ -45,6 +45,7 @@ api.use(cors({
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
+
 api.use(express.json())
 
 api.get(`/login`, (req, res) => {
@@ -117,13 +118,14 @@ api.get(`/getTurnos/`, (req, res) => {
 })
 
 api.put(`/crearTurno/`, (req, res) => {
-    //
-    console.log(req.body) // objeto json con el turno
+
+    //console.log("mainapi crear:", req.body) // objeto json con el turno
     let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
     ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
     try {
 
+        // El " / 60000" es para convertir de milisegundos a minutos.
         let duracionClase = ((Number(Turno.convertirFechaStringADate(fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(fechaHoraInicio).getTime())) / 60000)
 
         // patron de mediador
@@ -138,6 +140,26 @@ api.put(`/crearTurno/`, (req, res) => {
             res.send(false)
         }
 
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.post(`/editarTurno/`, (req, res) => {
+
+    try {
+        console.log("mainapi editar:", req.body)
+        res.send(contenedorTurno.editarTurno(req.body))
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.delete("/eliminarTurno/", (req, res) => {
+
+    try {
+        console.log("mainapi eliminar:", req.query)
+        res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
         console.log(e)
     }
