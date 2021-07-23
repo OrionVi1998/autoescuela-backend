@@ -56,7 +56,7 @@ class ContenedorTurno {
             profesorPresente
         );
 
-        console.log(tur)
+        //console.log("contenedorturno crear:", tur)
 
         let disponib = true
 
@@ -68,7 +68,6 @@ class ContenedorTurno {
                 disponib = false
             }
         })
-
 
         if (disponib) {
 
@@ -83,13 +82,12 @@ class ContenedorTurno {
         } else {
             return false
         }
-
-
     }
 
 
     editarTurno(turno) {
 
+        console.log("contenedorturno editar:", turno)
         Storebroker.editarTurno(turno)
 
         let editadoConExito = false
@@ -108,16 +106,19 @@ class ContenedorTurno {
 
     eliminarTurno(turno) {
 
+        //console.log("contendor eliminar:", turno)
         if (this.verificarPoliticaCancel(turno)) {
 
             Storebroker.eliminarTurno(turno)
 
             this.turnos = this.turnos.filter(
-                t => t.id_turno !== turno.id_turno
+                t => t.id_turno !== Number(turno.id_turno) // debemos hacer el Number(tur...) porque `turno` llega como string
             );
 
+            return true;
+
         } else {
-            console.log("Este turno no puede ser cancelado.\n Por favor cancelar con 24hs de anticipacion.");
+            return false
         }
 
     }
@@ -134,16 +135,22 @@ class ContenedorTurno {
 
         // recibimos la fecha y la hora del 'presente', 'ahora', 'en este preciso instante'
         let datetimeAhora = new Date();
+        // le restamos 1 al indice del mes porque cuando se convierte Date -> string, se suma 1 al indice; lo tenemos que volver a restar
+        datetimeAhora.setUTCMonth(datetimeAhora.getUTCMonth()-1)
+        console.log("datetimeahora:", datetimeAhora)
+        console.log("reservaturnoinicio:", reservaTurnoInicio)
 
         if (datetimeAhora.getYear() <= reservaTurnoInicio.getYear() &&
             datetimeAhora.getMonth() <= reservaTurnoInicio.getMonth()) {
 
-            if ((datetimeAhora.getDay() - reservaTurnoInicio.getDay()) >= 1) {
+            if ((reservaTurnoInicio.getDate() - datetimeAhora.getDate()) >= 1) {
                 return true;
             }
 
             return false;
         }
+
+        return false;
     }
 
 
