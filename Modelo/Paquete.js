@@ -79,7 +79,7 @@ class ContenedorPaquete {
 
     }
 
-    eliminarPaquete(paquete) {
+    eliminarPaquete(paquete) { //TODO
 
         Storebroker.eliminarPaquete(paquete)
         this.paquetes = this.paquetes.map(p => {
