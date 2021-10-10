@@ -45,6 +45,7 @@ api.use(cors({
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
+
 api.use(express.json())
 
 api.get(`/login`, (req, res) => {
@@ -56,8 +57,8 @@ api.get(`/login`, (req, res) => {
 
     console.log(`LOGIN ATTEMPT: ${req.query.email} - A: ${admin} - P: ${profesor} `)
 
-    if (admin) {res.send({session: true, credencial:admin.credencial})}
-    else if (profesor) {res.send({session: true, credencial:profesor.credencial})}
+    if (admin) {res.send({session: true, credencial:admin.credencial, user: admin})}
+    else if (profesor) {res.send({session: true, credencial:profesor.credencial, user: profesor})}
     else {res.send({session:false})}
 
 })
@@ -71,6 +72,26 @@ api.get(`/getPaquetes/`, (req, res) => {
     console.log(`GET PAQUETES - ENVIANDO`)
     res.send(paquetes_retorno)
 })
+
+api.put(`/crearPaquete/`, (req, res) => {
+    //TODO EDITAR -> Mover a post
+    console.log(req.body)
+    res.send(true)
+})
+
+api.post(`/asociarPaquete/`, (req, res) => {
+
+    let alumno, paqueteAsociar;
+    ({alumno, paqueteAsociar} = req.body)
+    console.log(`ASOCIAR_PAQUETE ${alumno.id_alumno} ${paqueteAsociar.id_paquete}`)
+
+    alumno = contenedorAlumno.getAlumno(alumno)
+    paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
+
+    contenedorPagos.generarPagos(paqueteAsociar, alumno)
+    res.send(true)
+})
+
 
 api.get(`/getPagos/`, (req, res) => {
     let pagos_retorno = contenedorPagos.getPagos()
@@ -117,8 +138,8 @@ api.get(`/getTurnos/`, (req, res) => {
 })
 
 api.put(`/crearTurno/`, (req, res) => {
-    //
-    console.log(req.body) // objeto json con el turno
+
+    //console.log("mainapi crear:", req.body) // objeto json con el turno
     let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
     ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
@@ -147,7 +168,18 @@ api.put(`/crearTurno/`, (req, res) => {
 api.post(`/editarTurno/`, (req, res) => {
 
     try {
+        console.log("mainapi editar:", req.body)
         res.send(contenedorTurno.editarTurno(req.body))
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.delete("/eliminarTurno/", (req, res) => {
+
+    try {
+        console.log("mainapi eliminar:", req.query)
+        res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
         console.log(e)
     }
@@ -274,45 +306,3 @@ api.delete("/eliminarProfesor", (req, res) => {
         console.log(e)
     }
 })
-
-api.put("/crearPaquete/", (req, res) => {
-    console.log(req.body)
-    let nombre, cantClases, durClases, precio;
-    ({nombre, cantClases, durClases, precio} = req.body)
-
-    try {
-        contenedorPaquete.crearPaquete(nombre, Number(cantClases), Number(durClases), Number(precio))
-        res.send(true)
-    } catch (e) {
-        console.log(e)
-    }
-
-})
-
-
-api.post("/editarPaquete/", (req, res) => {
-
-    console.log(`EDITAR PAQUETE - ${req.body.id_paquete}`)
-
-    try {
-        contenedorPaquete.editarPaquete(req.body)
-        res.send(true)
-    } catch (e) {
-        console.log(e)
-    }
-
-})
-
-api.delete("/eliminarPaquete/", (req, res) => {
-
-    console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
-
-    try {
-        contenedorPaquete.eliminarPaquete({id_paquete: Number(req.query.id_paquete)})
-        res.send(true)
-    } catch (e) {
-        console.log(e)
-    }
-
-})
-
