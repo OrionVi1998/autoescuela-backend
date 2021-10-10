@@ -63,13 +63,19 @@ class ContenedorPagos {
         });
     }
 
-    generarPagos(paquete, alumno, date, porcentajeSenia) {
+    generarPagos(paquete, alumno) {
 
-        let monto_inicial = Math.round(paquete.precio*porcentajeSenia)
 
-        this.crearPago(alumno.alumno_id, paquete.paquete_id, monto_inicial, date, 0)
-        this.crearPago(alumno.alumno_id, paquete.paquete_id, Math.round(paquete.precio - monto_inicial/ 2), null, 0)
-        this.crearPago(alumno.alumno_id, paquete.paquete_id, Math.round(paquete.precio - monto_inicial/ 2), null, 0)
+
+        if (paquete.cantClases > 1) {
+            let monto_inicial = Math.round(paquete.precio*0.1)
+            let primerPago = Math.round((paquete.precio - monto_inicial)/ 2)
+            this.crearPago(alumno.id_alumno, paquete.id_paquete, monto_inicial, null, 0)
+            this.crearPago(alumno.id_alumno, paquete.id_paquete, primerPago, null, 0)
+            this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio-monto_inicial-primerPago, null, 0)
+        } else {
+            this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio, null, 0)
+        }
 
     }
 
