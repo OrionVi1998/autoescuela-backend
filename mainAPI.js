@@ -72,6 +72,26 @@ api.get(`/getPaquetes/`, (req, res) => {
     res.send(paquetes_retorno)
 })
 
+api.put(`/crearPaquete/`, (req, res) => {
+    //TODO EDITAR -> Mover a post
+    console.log(req.body)
+    res.send(true)
+})
+
+api.post(`/asociarPaquete/`, (req, res) => {
+
+    let alumno, paqueteAsociar;
+    ({alumno, paqueteAsociar} = req.body)
+    console.log(`ASOCIAR_PAQUETE ${alumno.id_alumno} ${paqueteAsociar.id_paquete}`)
+
+    alumno = contenedorAlumno.getAlumno(alumno)
+    paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
+
+    contenedorPagos.generarPagos(paqueteAsociar, alumno)
+    res.send(true)
+})
+
+
 api.get(`/getPagos/`, (req, res) => {
     let pagos_retorno = contenedorPagos.getPagos()
     console.log(`GET PAGOS - ENVIANDO`)
