@@ -302,7 +302,7 @@ api.post("/editarPaquete/", (req, res) => {
     }
 
 })
-/*
+
 api.delete("/eliminarPaquete/", (req, res) => {
 
     console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
@@ -315,4 +315,4 @@ api.delete("/eliminarPaquete/", (req, res) => {
     }
 
 })
-*/
+

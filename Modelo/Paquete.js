@@ -82,14 +82,7 @@ class ContenedorPaquete {
     eliminarPaquete(paquete) { //TODO
 
         Storebroker.eliminarPaquete(paquete)
-        this.paquetes = this.paquetes.map(p => {
-                if (p.id_paquete === paquete.id_paquete) {
-                    return paquete
-                } else {
-                    return p
-                }
-            }
-        );
+        this.paquetes = this.paquetes.filter(a => paquete.id_paquete !== p.id_paquete)
     }
 }
 
