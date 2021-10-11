@@ -111,36 +111,45 @@ class Profesor extends Usuario {
 
 
     // Retorna True si puede tener turno en esta hora
-    verificarDispHoraria(horaCheck, duracionClase) {
+    verificarDispHoraria(turnoFechaInicio, duracionClase) {
 
-        // Duracion de clase en minutos
+        // la hora del profesor esta en formato time HH:mm:ss
+        let horaInicio = this.horaInicio.split(":")
+        let horaFin = this.horaFin.split(":")
 
-        let hI = this.horaInicio.split(":")
-        let hF = this.horaFin.split(":")
-        let hC = horaCheck.split(":")
+        // convertimos las fechas en mainAPI
 
-        let h = Math.round(duracionClase / 60)
-        let m = duracionClase % 60
+        // el -3 es para pasar el horario a GMT-3 (Argentina Standard Time)
+        let profHoraInicio = new Date(turnoFechaInicio.getFullYear(),
+                                      turnoFechaInicio.getMonth(),
+                                      turnoFechaInicio.getDate(),
+                                      Number(horaInicio[0])-3,
+                                      Number(horaInicio[1]),
+                                      0)
 
-        hI = new Date(1, 1, 1, Number(hI[0]), Number(hI[1]), Number(hI[2]))
-        hF = new Date(1, 1, 1, Number(hF[0]), Number(hF[1]), Number(hF[2]))
-        let hCI = new Date(1, 1, 1, Number(hC[0]), Number(hC[1]), Number(hC[2]))
-        let hCF = new Date(1, 1, 1, Number(hC[0]) + h, Number(hC[1]) + m, Number(hC[2]))
+        // el -3 es para pasar el horario a GMT-3 (Argentina Standard Time)
+        let profHoraFin = new Date(turnoFechaInicio.getFullYear(),
+                                   turnoFechaInicio.getMonth(),
+                                   turnoFechaInicio.getDate(),
+                                   Number(horaFin[0])-3,
+                                   Number(horaFin[1]),
+                                   0)
 
-        console.log(hI < hCI && hCF < hF)
 
-        if (hI < hCI && hCF < hF) {
+        if (profHoraInicio.getTime() < turnoFechaInicio.getTime() &&
+            (turnoFechaInicio.getTime() + (duracionClase * 60)) < profHoraFin.getTime()) {
 
-            console.log(hI < hCI && hCF < hF)
+            // console.log(profHoraInicio.getTime() < turnoFechaInicio.getTime() && (turnoFechaInicio.getTime() + duracionClase) < profHoraFin.getTime())
 
-            // Check Turnos
-            // Si turno overlap -> False
-            // Else True
+            // aca solo chequeamos si tiene disponibilidad horaria
+            // el trabajo de chequear si tiene turnos en este horario seria de turnos
+            return true;
 
         } else {
             return false
         }
     }
+
 }
 
 

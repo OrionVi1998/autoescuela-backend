@@ -45,6 +45,7 @@ api.use(cors({
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
+
 api.use(express.json())
 
 api.get(`/login`, (req, res) => {
@@ -131,6 +132,59 @@ api.get(`/getTurnos/`, (req, res) => {
     res.send(turnos_retorno)
 })
 
+api.put(`/crearTurno/`, (req, res) => {
+
+    //console.log("mainapi crear:", req.body) // objeto json con el turno
+    let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
+    ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
+
+    try {
+
+        // El " / 60000" es para convertir de milisegundos a minutos.
+        let duracionClase = ((Number(Turno.convertirFechaStringADate(fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(fechaHoraInicio).getTime())) / 60000)
+
+        // patron de mediador
+        if (contenedorProfesor.getProfesor({id_usuario: usuario_id}).verificarDispHoraria(Turno.convertirFechaStringADate(fechaHoraInicio), duracionClase)) {
+
+            // devolvemos la respuesta de la creacion de turno, "true" o "false"
+            res.send(contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1))
+
+        } else {
+
+            // si no hay disponibilidad horaria del profesor, devolvemos false
+            res.send(false)
+        }
+
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.post(`/editarTurno/`, (req, res) => {
+
+    try {
+        console.log("mainapi editar:", req.body)
+        res.send(contenedorTurno.editarTurno(req.body))
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.delete("/eliminarTurno/", (req, res) => {
+
+    try {
+        console.log("mainapi eliminar:", req.query)
+        res.send(contenedorTurno.eliminarTurno(req.query))
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+api.get(`/getAlumnos/`, (req, res) => {
+    let alumnos_retorno = contenedorAlumno.getAlumnos()
+    console.log(`GET ALUMNOS - ENVIANDO`)
+    res.send(alumnos_retorno)
+})
 
 api.get("/getTurnosProfesor/", (req, res) => {
     console.log(`GET TURNOS PROFESOR - ${req.query.usuario_id}`)

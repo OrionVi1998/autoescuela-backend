@@ -1,7 +1,8 @@
-let config;
+let config = require('./config.json');
 
 const mariadb = require("mariadb");
 
+/*
 config = {
     "connectionLimit": 10,
     "host": process.env.MARIADB_HOST,
@@ -10,6 +11,7 @@ config = {
     "database": process.env.MARIADB_DB,
     "port": Number(process.env.MARIADB_PORT)
 }
+*/
 
 
 console.log("DB CONNECTION ATTEMPT")
@@ -189,8 +191,8 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             // usar esto en PostgreSQL INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id;
-            const rows = await conn.query("INSERT INTO paquetes (nombre, cantClases, duracionClases, precio, estado) VALUES (?, ?, ?, ?, 1)",
-                [paquete.nombre, paquete.cantClases, paquete.duracionClases, paquete.precio]);
+            const rows = await conn.query("INSERT INTO paquetes (nombre, cantClases, durClases, precio, estado) VALUES (?, ?, ?, ?, 1)",
+                [paquete.nombre, paquete.cantClases, paquete.durClases, paquete.precio]);
             // console.log(rows);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
@@ -208,8 +210,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, duracionClases=?, precio=?, estado=? WHERE ID_PAQUETE=?",
-                [paquete.nombre, paquete.cantClases, paquete.duracionClase, paquete.precio, paquete.estado, paquete.id_paquete]);
+            const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, durClases=?, precio=? WHERE ID_PAQUETE=?",
+                [paquete.nombre, paquete.cantClases, paquete.durClases, paquete.precio, paquete.id_paquete]);
             console.log(rows); // TODO
 
         } catch (err) {
@@ -326,9 +328,11 @@ class Storebroker {
     static async crearTurno(turno) {
         let conn;
         try {
+
+            console.log("storebroker crear:", turno)
             conn = await pool.getConnection();
             const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, fechaHoraInicio, fechaHoraFin, profesorPresente) VALUES (?, ?, ?, ?, ?)",
-                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.profesorPresente]);
+                                          [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio.toISOString().replace('T', ' ').substr(0, 19), turno.fechaHoraFin.toISOString().replace('T', ' ').substr(0, 19), turno.profesorPresente]);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
@@ -346,8 +350,10 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
+            console.log("storebroker editar:", turno)
+            console.log("toISOString:", turno.fechaHoraInicio.replace('T', ' ').substr(0, 19))
             const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, fechaHoraInicio=?, fechaHoraFin=?, profesorPresente=? WHERE ID_TURNO=?",
-                [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio, turno.fechaHoraFin, turno.profesorPresente, turno.id_turno]);
+                                          [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio.replace('T', ' ').substr(0, 19), turno.fechaHoraFin.replace('T', ' ').substr(0, 19), turno.profesorPresente, turno.id_turno]);
             console.log(rows); // TODO
 
         } catch (err) {
@@ -360,6 +366,8 @@ class Storebroker {
     static async eliminarTurno(turno) {
         let conn;
         try {
+
+            // console.log("storebroker eliminar:", turno)
             conn = await pool.getConnection();
             const rows = await conn.query("DELETE FROM turnos WHERE ID_TURNO=?",
                 [turno.id_turno]);
