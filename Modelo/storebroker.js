@@ -255,6 +255,14 @@ class Storebroker {
     static async crearPago(pago) {
         let conn;
         try {
+            let fecha;
+            try {
+                fecha = pago.fechaRealizada.toISOString().replace('T', ' ').substr(0, 19);
+            } catch (TypeError) {
+                fecha = null;
+                console.log("Type Error")
+            }
+
             conn = await pool.getConnection(); // pagado = 1 // a pagar = 0
             const rows = await conn.query("INSERT INTO pagos (ALUMNO_ID, PAQUETE_ID, monto, fechaRealizado, pagado) VALUES (?, ?, ?, ?, ?)",
                 [pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado]);
