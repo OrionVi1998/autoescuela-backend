@@ -65,17 +65,29 @@ class ContenedorPagos {
 
     generarPagos(paquete, alumno) {
 
+        let fechaSenia = new Date()
+        // fechaSenia.setUTCMonth(fechaSenia.getUTCMonth()-1)
+        fechaSenia.setUTCHours(fechaSenia.getUTCHours()-3)
 
 
         if (paquete.cantClases > 1) {
             let monto_inicial = Math.round(paquete.precio*0.1)
             let primerPago = Math.round((paquete.precio - monto_inicial)/ 2)
-            this.crearPago(alumno.id_alumno, paquete.id_paquete, monto_inicial, null, 0)
+            this.crearPago(alumno.id_alumno, paquete.id_paquete, monto_inicial, fechaSenia, 1)
             this.crearPago(alumno.id_alumno, paquete.id_paquete, primerPago, null, 0)
             this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio-monto_inicial-primerPago, null, 0)
+
         } else {
-            this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio, null, 0)
+            this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio, fechaSenia, 1)
         }
+    }
+
+    getPrimerPago(alumno, paquete) {
+
+        let monto_inicial = Math.round(paquete.precio*0.1)
+        let pagoInicial = this.pagos.filter(p => (p.alumno_id === alumno.id_alumno) && (p.monto === monto_inicial) && (p.paquete_id === paquete.id_paquete))
+
+        return pagoInicial
 
     }
 

@@ -232,6 +232,43 @@ api.post("/editarAlumno/", (req, res) => {
 
 })
 
+api.get("/eliminarCheckAlumno/", (req, res) => {
+
+
+    console.log(JSON.parse(req.query.alumno))
+
+    let alumno = JSON.parse(req.query.alumno)
+
+    //Check cuando el alumno puede ser eliminado
+    //No tenga pagos pendientes
+    //No tenga clases pendientes
+
+    alumnoPuedeSerEliminado = 0
+    let pendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0)
+    if ( pendientes.length === 0 && alumno.cantClasesRestantes === 0) {
+        console.log(pendientes.length, alumno.cantClasesRestantes)
+        //TODO
+    }
+
+    // let paquetes = [];
+    // contenedorPagos.getPagosAlumno(alumno).map(pago => {
+    //     if (!paquetes.includes(pago.paquete_id)) {
+    //         paquetes.push(pago.paquete_id)
+    //     }
+    // })
+    // // console.log(paquetes)
+    //
+    // paquetes.map(paqId => {
+    //     let paquete = contenedorPaquete.getPaquete(paqId)
+    //     // console.log(paqId, paquete)
+    //     let primerPago = contenedorPagos.getPrimerPago(alumno, paquete)
+    //     console.log(primerPago)
+    // })
+
+    console.log(`CHECK ELIMINAR ALUMNO - ${req.query.id_alumno}`)
+    res.send(true)
+})
+
 api.delete("/eliminarAlumno/", (req, res) => {
 
     console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
