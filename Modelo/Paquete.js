@@ -1,6 +1,5 @@
 const Storebroker = require('./storebroker')
 
-
 class ContenedorPaquete {
     paquetes;
 
@@ -21,7 +20,7 @@ class ContenedorPaquete {
                     p.ID_PAQUETE,
                     p.nombre,
                     p.cantClases,
-                    p.duracionClases,
+                    p.durClases,
                     p.precio,
                     p.estado
                 )
@@ -45,15 +44,15 @@ class ContenedorPaquete {
     }
 
 
-    crearPaquete(nombre, cantClases, duracionClases, precio, estado) {
+    crearPaquete(nombre, cantClases, durClases, precio) {
 
         let paq = new Paquete(
             9999,
             nombre,
             cantClases,
-            duracionClases,
+            durClases,
             precio,
-            estado
+            1
         );
 
         Storebroker.crearPaquete(paq).then(r => {
@@ -65,7 +64,9 @@ class ContenedorPaquete {
     }
 
     editarPaquete(paquete) {
+
         Storebroker.editarPaquete(paquete)
+
         this.paquetes = this.paquetes.map(p => {
                 if (p.id_paquete === paquete.id_paquete) {
                     return paquete
@@ -74,19 +75,14 @@ class ContenedorPaquete {
                 }
             }
         );
+
+
     }
 
-    eliminarPaquete(paquete) {
+    eliminarPaquete(paquete) { //TODO
 
         Storebroker.eliminarPaquete(paquete)
-        this.paquetes = this.paquetes.map(p => {
-                if (p.id_paquete === paquete.id_paquete) {
-                    return paquete
-                } else {
-                    return p
-                }
-            }
-        );
+        this.paquetes = this.paquetes.filter(a => paquete.id_paquete !== p.id_paquete)
     }
 }
 
@@ -95,15 +91,15 @@ class Paquete {
     id_paquete;
     nombre;
     cantClases;
-    duracionClases;
+    durClases;
     precio;
     estado;
 
-    constructor(id_paquete, nombre, cantClases, duracionClase, precio, estado = 1) {
+    constructor(id_paquete, nombre, cantClases, durClase, precio, estado = 1) {
         this.id_paquete = id_paquete
         this.nombre = nombre
         this.cantClases = cantClases
-        this.duracionClases = duracionClase
+        this.durClases = durClase
         this.precio = precio
         this.estado = estado
     }
@@ -114,3 +110,5 @@ class Paquete {
 
 
 module.exports = {Paquete, ContenedorPaquete}
+
+

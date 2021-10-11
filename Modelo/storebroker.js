@@ -191,8 +191,8 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             // usar esto en PostgreSQL INSERT INTO persons (lastname,firstname) VALUES ('Smith', 'John') RETURNING id;
-            const rows = await conn.query("INSERT INTO paquetes (nombre, cantClases, duracionClases, precio, estado) VALUES (?, ?, ?, ?, 1)",
-                [paquete.nombre, paquete.cantClases, paquete.duracionClases, paquete.precio]);
+            const rows = await conn.query("INSERT INTO paquetes (nombre, cantClases, durClases, precio, estado) VALUES (?, ?, ?, ?, 1)",
+                [paquete.nombre, paquete.cantClases, paquete.durClases, paquete.precio]);
             // console.log(rows);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
@@ -210,8 +210,8 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, duracionClases=?, precio=?, estado=? WHERE ID_PAQUETE=?",
-                [paquete.nombre, paquete.cantClases, paquete.duracionClase, paquete.precio, paquete.estado, paquete.id_paquete]);
+            const rows = await conn.query("UPDATE paquetes SET nombre=?, cantClases=?, durClases=?, precio=? WHERE ID_PAQUETE=?",
+                [paquete.nombre, paquete.cantClases, paquete.durClases, paquete.precio, paquete.id_paquete]);
             console.log(rows); // TODO
 
         } catch (err) {
