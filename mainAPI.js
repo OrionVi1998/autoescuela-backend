@@ -73,11 +73,6 @@ api.get(`/getPaquetes/`, (req, res) => {
     res.send(paquetes_retorno)
 })
 
-api.put(`/crearPaquete/`, (req, res) => {
-    //TODO EDITAR -> Mover a post
-    console.log(req.body)
-    res.send(true)
-})
 
 api.post(`/asociarPaquete/`, (req, res) => {
 
