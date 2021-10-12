@@ -57,8 +57,8 @@ api.get(`/login`, (req, res) => {
 
     console.log(`LOGIN ATTEMPT: ${req.query.email} - A: ${admin} - P: ${profesor} `)
 
-    if (admin) {res.send({session: true, credencial:admin.credencial, user: admin})}
-    else if (profesor) {res.send({session: true, credencial:profesor.credencial, user: profesor})}
+    if (admin) {res.send({session: true, credencial:admin.credencial})}
+    else if (profesor) {res.send({session: true, credencial:profesor.credencial})}
     else {res.send({session:false})}
 
 })
@@ -163,12 +163,14 @@ api.put(`/crearTurno/`, (req, res) => {
 api.post(`/editarTurno/`, (req, res) => {
 
     try {
-        console.log("mainapi editar:", req.body)
+        console.log("mainapi editar paquete:", req.body)
+
         res.send(contenedorTurno.editarTurno(req.body))
     } catch (e) {
         console.log(e)
     }
 })
+
 
 api.delete("/eliminarTurno/", (req, res) => {
 
@@ -338,3 +340,45 @@ api.delete("/eliminarProfesor", (req, res) => {
         console.log(e)
     }
 })
+
+api.put("/crearPaquete/", (req, res) => {
+    console.log(req.body)
+    let nombre, cantClases, durClases, precio;
+    ({nombre, cantClases, durClases, precio} = req.body)
+
+    try {
+        contenedorPaquete.crearPaquete(nombre, Number(cantClases), Number(durClases), Number(precio))
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+
+api.post("/editarPaquete/", (req, res) => {
+
+    console.log(`EDITAR PAQUETE - ${req.body.id_paquete}`)
+
+    try {
+        contenedorPaquete.editarPaquete(req.body)
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+api.delete("/eliminarPaquete/", (req, res) => {
+
+    console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
+
+    try {
+        contenedorPaquete.eliminarPaquete({id_paquete: Number(req.query.id_paquete)})
+        res.send(true)
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
