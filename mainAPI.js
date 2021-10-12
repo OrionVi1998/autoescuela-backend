@@ -45,6 +45,7 @@ api.use(cors({
     "preflightContinue": false,
     "optionsSuccessStatus": 204
 }))
+
 api.use(express.json())
 
 api.get(`/login`, (req, res) => {
@@ -71,6 +72,21 @@ api.get(`/getPaquetes/`, (req, res) => {
     console.log(`GET PAQUETES - ENVIANDO`)
     res.send(paquetes_retorno)
 })
+
+
+api.post(`/asociarPaquete/`, (req, res) => {
+
+    let alumno, paqueteAsociar;
+    ({alumno, paqueteAsociar} = req.body)
+    console.log(`ASOCIAR_PAQUETE ${alumno.id_alumno} ${paqueteAsociar.id_paquete}`)
+
+    alumno = contenedorAlumno.getAlumno(alumno)
+    paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
+
+    contenedorPagos.generarPagos(paqueteAsociar, alumno)
+    res.send(true)
+})
+
 
 api.get(`/getPagos/`, (req, res) => {
     let pagos_retorno = contenedorPagos.getPagos()
@@ -117,8 +133,8 @@ api.get(`/getTurnos/`, (req, res) => {
 })
 
 api.put(`/crearTurno/`, (req, res) => {
-    //
-    console.log(req.body) // objeto json con el turno
+
+    //console.log("mainapi crear:", req.body) // objeto json con el turno
     let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
     ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
@@ -147,7 +163,20 @@ api.put(`/crearTurno/`, (req, res) => {
 api.post(`/editarTurno/`, (req, res) => {
 
     try {
+        console.log("mainapi editar paquete:", req.body)
+
         res.send(contenedorTurno.editarTurno(req.body))
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+
+api.delete("/eliminarTurno/", (req, res) => {
+
+    try {
+        console.log("mainapi eliminar:", req.query)
+        res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
         console.log(e)
     }
@@ -203,6 +232,43 @@ api.post("/editarAlumno/", (req, res) => {
         console.log(e)
     }
 
+})
+
+api.get("/eliminarCheckAlumno/", (req, res) => {
+
+
+    console.log(JSON.parse(req.query.alumno))
+
+    let alumno = JSON.parse(req.query.alumno)
+
+    //Check cuando el alumno puede ser eliminado
+    //No tenga pagos pendientes
+    //No tenga clases pendientes
+
+    alumnoPuedeSerEliminado = 0
+    let pendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0)
+    if ( pendientes.length === 0 && alumno.cantClasesRestantes === 0) {
+        console.log(pendientes.length, alumno.cantClasesRestantes)
+        //TODO
+    }
+
+    // let paquetes = [];
+    // contenedorPagos.getPagosAlumno(alumno).map(pago => {
+    //     if (!paquetes.includes(pago.paquete_id)) {
+    //         paquetes.push(pago.paquete_id)
+    //     }
+    // })
+    // // console.log(paquetes)
+    //
+    // paquetes.map(paqId => {
+    //     let paquete = contenedorPaquete.getPaquete(paqId)
+    //     // console.log(paqId, paquete)
+    //     let primerPago = contenedorPagos.getPrimerPago(alumno, paquete)
+    //     console.log(primerPago)
+    // })
+
+    console.log(`CHECK ELIMINAR ALUMNO - ${req.query.id_alumno}`)
+    res.send(true)
 })
 
 api.delete("/eliminarAlumno/", (req, res) => {
