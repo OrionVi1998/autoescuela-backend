@@ -84,6 +84,16 @@ api.post(`/asociarPaquete/`, (req, res) => {
     paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
 
     contenedorPagos.generarPagos(paqueteAsociar, alumno)
+    console.log(alumno)
+    console.log(paqueteAsociar)
+
+    let clasesAgregar = paqueteAsociar.cantClases
+
+    while (clasesAgregar !== 0) {
+        clasesAgregar-=1
+        alumno.devolverClase(paqueteAsociar.durClases)
+    }
+
     res.send(true)
 })
 
@@ -237,19 +247,19 @@ api.post("/editarAlumno/", (req, res) => {
 api.get("/eliminarCheckAlumno/", (req, res) => {
 
 
-    console.log(JSON.parse(req.query.alumno))
-
     let alumno = JSON.parse(req.query.alumno)
 
     //Check cuando el alumno puede ser eliminado
     //No tenga pagos pendientes
     //No tenga clases pendientes
 
-    alumnoPuedeSerEliminado = 0
     let pendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0)
     if ( pendientes.length === 0 && alumno.cantClasesRestantes === 0) {
         console.log(pendientes.length, alumno.cantClasesRestantes)
-        //TODO
+        //TODO TESTING
+        res.send(true)
+    } else {
+        res.send(false)
     }
 
     // let paquetes = [];
@@ -268,7 +278,6 @@ api.get("/eliminarCheckAlumno/", (req, res) => {
     // })
 
     console.log(`CHECK ELIMINAR ALUMNO - ${req.query.id_alumno}`)
-    res.send(true)
 })
 
 api.delete("/eliminarAlumno/", (req, res) => {

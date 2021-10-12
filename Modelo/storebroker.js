@@ -267,7 +267,7 @@ class Storebroker {
 
             conn = await pool.getConnection(); // pagado = 1 // a pagar = 0
             const rows = await conn.query("INSERT INTO pagos (ALUMNO_ID, PAQUETE_ID, monto, fechaRealizado, pagado) VALUES (?, ?, ?, ?, ?)",
-                [pago.alumno_id, pago.paquete_id, pago.monto, pago.fechaRealizada, pago.pagado]);
+                [pago.alumno_id, pago.paquete_id, pago.monto, fecha, pago.pagado]);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             return last_id[0]["LAST_INSERT_ID()"];
