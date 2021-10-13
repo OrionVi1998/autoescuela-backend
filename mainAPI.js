@@ -99,7 +99,8 @@ api.post(`/asociarPaquete/`, (req, res) => {
 
 
 api.get(`/getPagos/`, (req, res) => {
-    let pagos_retorno = contenedorPagos.getPagos()
+    let alumnos = contenedorAlumno.getAlumnos()
+    let pagos_retorno = alumnos.map(al => ({id_alumno:al.id_alumno, pagos: mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(al.id_alumno))}))
     console.log(`GET PAGOS - ENVIANDO`)
     res.send(pagos_retorno)
 })
@@ -255,7 +256,7 @@ api.get("/eliminarCheckAlumno/", (req, res) => {
 
     let pendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0)
     if ( pendientes.length === 0 && alumno.cantClasesRestantes === 0) {
-        console.log(pendientes.length, alumno.cantClasesRestantes)
+        // console.log(pendientes.length, alumno.cantClasesRestantes)
         //TODO TESTING
         res.send(true)
     } else {
@@ -277,7 +278,7 @@ api.get("/eliminarCheckAlumno/", (req, res) => {
     //     console.log(primerPago)
     // })
 
-    console.log(`CHECK ELIMINAR ALUMNO - ${req.query.id_alumno}`)
+    console.log(`CHECK ELIMINAR ALUMNO - ${alumno.id_alumno} - ${pendientes.length}&${alumno.cantClasesRestantes}`)
 })
 
 api.delete("/eliminarAlumno/", (req, res) => {

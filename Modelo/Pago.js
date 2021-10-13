@@ -59,7 +59,7 @@ class ContenedorPagos {
         Storebroker.crearPago(pago).then(r => {
             pago.id_pago = r
             this.pagos.push(pago)
-            console.log(this.pagos)
+            // console.log(this.pagos)
         });
     }
 
