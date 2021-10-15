@@ -94,7 +94,9 @@ api.post(`/asociarPaquete/`, (req, res) => {
         alumno.devolverClase(paqueteAsociar.durClases)
     }
 
-    res.send(true)
+    let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
+
+    res.send(pagos_alumno_ret)
 })
 
 
