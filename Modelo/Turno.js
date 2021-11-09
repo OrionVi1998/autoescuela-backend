@@ -17,6 +17,12 @@ class ContenedorTurno {
         try {
             let async_result = await Storebroker.getTurnos()
             async_result = async_result.map(t => {
+
+                // si en la base de datos tenemos una date: 2021-10-11T15:00:00.00Z, si no hacemos esta conversion
+                // de horas entonces llegaria como: 2021-10-11T18:00:00.00Z
+                t.fechaHoraInicio.setUTCHours(Number(t.fechaHoraInicio.getUTCHours() - 3))
+                t.fechaHoraFin.setUTCHours(Number(t.fechaHoraFin.getUTCHours() - 3))
+
                 return new Turno(
                     t.ID_TURNO,
                     t.ALUMNO_ID,
