@@ -80,9 +80,12 @@ class ContenedorPaquete {
     }
 
     eliminarPaquete(paquete) { //TODO
+        paquete = this.paquetes.find(p => p.id_paquete === paquete.id_paquete)
+        paquete.estado = 0;
+        Storebroker.eliminarPaquete(paquete);
+        this.paquetes = this.paquetes.filter(p => paquete.id_paquete !== p.id_paquete)
+        this.paquetes.push(paquete);
 
-        Storebroker.eliminarPaquete(paquete)
-        this.paquetes = this.paquetes.filter(a => paquete.id_paquete !== p.id_paquete)
     }
 }
 
