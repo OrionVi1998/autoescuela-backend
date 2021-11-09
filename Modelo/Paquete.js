@@ -58,7 +58,7 @@ class ContenedorPaquete {
         Storebroker.crearPaquete(paq).then(r => {
             paq.id_paquete = r
             this.paquetes.push(paq)
-            console.log(this.paquetes)
+            // console.log(this.paquetes)
         })
 
     }

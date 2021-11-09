@@ -1,8 +1,8 @@
-let config = require('./config.json');
+// let config = require('./config.json');
 
 const mariadb = require("mariadb");
 
-/*
+
 config = {
     "connectionLimit": 10,
     "host": process.env.MARIADB_HOST,
@@ -11,7 +11,7 @@ config = {
     "database": process.env.MARIADB_DB,
     "port": Number(process.env.MARIADB_PORT)
 }
-*/
+
 
 
 console.log("DB CONNECTION ATTEMPT")
@@ -262,7 +262,7 @@ class Storebroker {
                 fecha = pago.fechaRealizada.toISOString().replace('T', ' ').substr(0, 19);
             } catch (TypeError) {
                 fecha = null;
-                console.log("Type Error")
+                console.log(`CREAR PAGO SQL - TYPE ERROR - ${pago.fechaRealizada}`)
             }
 
             conn = await pool.getConnection(); // pagado = 1 // a pagar = 0

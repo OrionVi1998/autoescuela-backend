@@ -50,7 +50,7 @@ class ContenedorAlumno {
         Storebroker.crearAlumno(alumno_nuevo).then(id => {
             alumno_nuevo.id_alumno = id
             this.alumnos.push(alumno_nuevo)
-            console.log(this.alumnos)
+            // console.log(this.alumnos)
         })
     }
 

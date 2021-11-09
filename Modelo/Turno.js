@@ -45,7 +45,7 @@ class ContenedorTurno {
     }
 
 
-    crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente) {
+    crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente, alumno, duracionClase) {
 
         let tur = new Turno(
             500,
@@ -72,6 +72,7 @@ class ContenedorTurno {
         if (disponib) {
 
             Storebroker.crearTurno(tur).then(r => {
+                alumno.usarClase(duracionClase)
                 tur.id_turno = r
                 this.turnos.push(tur)
                 // console.log(tur.id_turno)
@@ -234,6 +235,18 @@ class ContenedorTurno {
 
         return this.turnos.filter(t => t.alumno_id === alumno.id_alumno).length !== 0
     }
+
+
+    eliminarTurnosAlumno(id_alumno) {
+        this.turnos.map(t => {
+            if (t.alumno_id === id_alumno) {
+                Storebroker.eliminarTurno(t);
+            }
+        })
+        this.turnos = this.turnos.filter(t => t.alumno_id !== id_alumno)
+    }
+
+
 
 }
 
