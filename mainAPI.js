@@ -159,8 +159,10 @@ api.put(`/crearTurno/`, (req, res) => {
         // patron de mediador
         if (contenedorProfesor.getProfesor({id_usuario: usuario_id}).verificarDispHoraria(Turno.convertirFechaStringADate(fechaHoraInicio), duracionClase)) {
 
+            let alumno = contenedorAlumno.getAlumno({id_alumno: alumno_id})
+
             // devolvemos la respuesta de la creacion de turno, "true" o "false"
-            res.send(contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1))
+            res.send(contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1, alumno, duracionClase))
 
         } else {
 
@@ -177,7 +179,6 @@ api.post(`/editarTurno/`, (req, res) => {
 
     try {
         console.log("mainapi editar paquete:", req.body)
-
         res.send(contenedorTurno.editarTurno(req.body))
     } catch (e) {
         console.log(e)
@@ -188,7 +189,10 @@ api.post(`/editarTurno/`, (req, res) => {
 api.delete("/eliminarTurno/", (req, res) => {
 
     try {
-        console.log("mainapi eliminar:", req.query)
+        console.log("ELIMINAR TURNO:", req.query.id_turno)
+        let alum =  contenedorAlumno.getAlumno({id_alumno: Number(req.query.alumno_id)});
+        let duracionClase = ((Number(Turno.convertirFechaStringADate(req.query.fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(req.query.fechaHoraInicio).getTime())) / 60000)
+        alum.devolverClase(duracionClase)
         res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
         console.log(e)
@@ -287,10 +291,9 @@ api.delete("/eliminarAlumno/", (req, res) => {
 
     console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
 
-    //TODO: Posible eliminar?
-
     try {
-        contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)})
+        contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)});
+        contenedorTurno.eliminarTurnosAlumno({id_alumno: Number(req.query.id_alumno)});
         res.send(true)
     } catch (e) {
         console.log(e)
@@ -321,7 +324,6 @@ api.put("/crearProfesor", (req, res) => {
     } catch (e) {
         console.log(e)
     }
-
 })
 
 api.post("/editarProfesor", (req, res) => {
