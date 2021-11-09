@@ -76,27 +76,34 @@ api.get(`/getPaquetes/`, (req, res) => {
 
 api.post(`/asociarPaquete/`, (req, res) => {
 
-    let alumno, paqueteAsociar;
-    ({alumno, paqueteAsociar} = req.body)
-    console.log(`ASOCIAR_PAQUETE ${alumno.id_alumno} ${paqueteAsociar.id_paquete}`)
+    try {
+        let alumno, paqueteAsociar;
+        ({alumno, paqueteAsociar} = req.body)
+        console.log(`ASOCIAR_PAQUETE ${alumno.id_alumno} ${paqueteAsociar.id_paquete}`)
 
-    alumno = contenedorAlumno.getAlumno(alumno)
-    paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
+        // console.log(alumno)
+        // console.log(paqueteAsociar)
 
-    contenedorPagos.generarPagos(paqueteAsociar, alumno)
-    console.log(alumno)
-    console.log(paqueteAsociar)
+        alumno = contenedorAlumno.getAlumno(alumno)
+        paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
 
-    let clasesAgregar = paqueteAsociar.cantClases
+        contenedorPagos.generarPagos(paqueteAsociar, alumno)
 
-    while (clasesAgregar !== 0) {
-        clasesAgregar-=1
-        alumno.devolverClase(paqueteAsociar.durClases)
+        let clasesAgregar = paqueteAsociar.cantClases
+
+        while (clasesAgregar !== 0) {
+            clasesAgregar-=1
+            alumno.devolverClase(paqueteAsociar.durClases)
+        }
+
+        let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
+
+        res.send(pagos_alumno_ret)
+    } catch (e) {
+        console.log(e)
+        res.send(false)
     }
 
-    let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
-
-    res.send(pagos_alumno_ret)
 })
 
 
@@ -395,6 +402,7 @@ api.post("/editarPaquete/", (req, res) => {
 api.delete("/eliminarPaquete/", (req, res) => {
 
     console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
+    console.log(req.query)
 
     try {
         contenedorPaquete.eliminarPaquete({id_paquete: Number(req.query.id_paquete)})
