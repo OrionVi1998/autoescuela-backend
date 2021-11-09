@@ -136,8 +136,8 @@ class Profesor extends Usuario {
                                    0)
 
 
-        if (profHoraInicio.getTime() < turnoFechaInicio.getTime() &&
-            (turnoFechaInicio.getTime() + (duracionClase * 60)) < profHoraFin.getTime()) {
+        if (profHoraInicio.getTime() <= turnoFechaInicio.getTime() &&
+            (turnoFechaInicio.getTime() + (duracionClase * 60)) <= profHoraFin.getTime()) {
 
             // console.log(profHoraInicio.getTime() < turnoFechaInicio.getTime() && (turnoFechaInicio.getTime() + duracionClase) < profHoraFin.getTime())
 
