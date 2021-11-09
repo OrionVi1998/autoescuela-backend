@@ -69,7 +69,7 @@ api.get(`/`, (req, res) => {
 
 api.get(`/getPaquetes/`, (req, res) => {
     let paquetes_retorno = contenedorPaquete.getPaquetesVisibles()
-    console.log(`GET PAQUETES - ENVIANDO`)
+    // console.log(`GET PAQUETES - ENVIANDO`)
     res.send(paquetes_retorno)
 })
 
@@ -127,7 +127,7 @@ api.put(`/registrarPago`, ((req, res) => {
 
 api.get(`/getTurnos/`, (req, res) => {
     let turnos_retorno = contenedorTurno.getTurnos()
-    console.log(`GET TURNOS - ENVIANDO`)
+    // console.log(`GET TURNOS - ENVIANDO`)
 
     turnos_retorno.map((t) => {
 
@@ -147,7 +147,7 @@ api.get(`/getTurnos/`, (req, res) => {
 
 api.put(`/crearTurno/`, (req, res) => {
 
-    //console.log("mainapi crear:", req.body) // objeto json con el turno
+    console.log("mainapi crear:", req.body) // objeto json con el turno
     let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
     ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
@@ -179,7 +179,16 @@ api.post(`/editarTurno/`, (req, res) => {
 
     try {
         console.log("mainapi editar paquete:", req.body)
-        res.send(contenedorTurno.editarTurno(req.body))
+
+        // El " / 60000" es para convertir de milisegundos a minutos.
+        let duracionClase = ((Number(Turno.convertirFechaStringADate(req.body.fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(req.body.fechaHoraInicio).getTime())) / 60000)
+
+        if (contenedorProfesor.getProfesor({id_usuario: req.body.usuario_id}).verificarDispHoraria(Turno.convertirFechaStringADate(req.body.fechaHoraInicio), duracionClase)) {
+            res.send(contenedorTurno.editarTurno(req.body))
+
+        } else {
+            res.send(false)
+        }
     } catch (e) {
         console.log(e)
     }
@@ -201,7 +210,7 @@ api.delete("/eliminarTurno/", (req, res) => {
 
 api.get(`/getAlumnos/`, (req, res) => {
     let alumnos_retorno = contenedorAlumno.getAlumnos()
-    console.log(`GET ALUMNOS - ENVIANDO`)
+    // console.log(`GET ALUMNOS - ENVIANDO`)
     res.send(alumnos_retorno)
 })
 
@@ -303,7 +312,7 @@ api.delete("/eliminarAlumno/", (req, res) => {
 
 api.get("/getProfesores/", (req, res) => {
     let profesores_retorno = contenedorProfesor.getProfesores()
-    console.log("GET PROFESORES - ENVIANDO")
+    // console.log("GET PROFESORES - ENVIANDO")
     res.send(profesores_retorno)
 })
 
