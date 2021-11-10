@@ -3,7 +3,6 @@ function mediadorAsociarPaquete(contenedorAlumnos, contenedorPagos, contenedorPa
 }
 
 function mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, id_alumno) {
-    // TODO: Tomar en cuenta cuando un pago no tiene paquete
     let pagos = contenedorPagos.getPagosAlumno({id_alumno: id_alumno})
     if (pagos.length === 0) {
         return pagos

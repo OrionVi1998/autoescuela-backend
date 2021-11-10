@@ -44,27 +44,33 @@ class ContenedorProfesor {
         return this.profesores.find(p => p.id_usuario === profesor.id_usuario)
     }
 
-    crearProfesor(email, nombre, apellido, telefono, direccion, horaInicio, horaFin) {
+    async crearProfesor(email, nombre, apellido, telefono, direccion, horaInicio, horaFin) {
         // era guardar profesor, cambie de nombre
 
-        let p_nuevo = new Profesor(
-            9999,
-            email,
-            0,
-            nombre,
-            apellido,
-            telefono,
-            direccion,
-            horaInicio,
-            horaFin
-        )
+        return new Promise((resolve, reject) => {
+            try {
+                let p_nuevo = new Profesor(
+                    9999,
+                    email,
+                    0,
+                    nombre,
+                    apellido,
+                    telefono,
+                    direccion,
+                    horaInicio,
+                    horaFin
+                )
 
-        Storebroker.crearProfesor(p_nuevo).then(id_retornada => {
-            p_nuevo.id_usuario = id_retornada
-            this.profesores.push(p_nuevo)
+                Storebroker.crearProfesor(p_nuevo).then(id_retornada => {
+                    p_nuevo.id_usuario = id_retornada
+                    this.profesores.push(p_nuevo)
+                    resolve(this.profesores)
+                })
+            } catch (e) {
+                console.log(e)
+                reject(e)
+            }
         })
-
-
     }
 
     editarProfesor(profesor) {

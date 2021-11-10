@@ -90,18 +90,19 @@ api.post(`/asociarPaquete/`, (req, res) => {
         alumno = contenedorAlumno.getAlumno(alumno)
         paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
 
-        contenedorPagos.generarPagos(paqueteAsociar, alumno)
+        contenedorPagos.generarPagos(paqueteAsociar, alumno).then(() => {
+            let clasesAgregar = paqueteAsociar.cantClases
 
-        let clasesAgregar = paqueteAsociar.cantClases
+            while (clasesAgregar !== 0) {
+                clasesAgregar-=1
+                alumno.devolverClase(paqueteAsociar.durClases)
+            }
 
-        while (clasesAgregar !== 0) {
-            clasesAgregar-=1
-            alumno.devolverClase(paqueteAsociar.durClases)
-        }
+            let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
 
-        let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
+            res.send(pagos_alumno_ret)
+        })
 
-        res.send(pagos_alumno_ret)
     } catch (e) {
         console.log(e)
         res.send(false)
@@ -327,8 +328,8 @@ api.get("/getProfesores/", (req, res) => {
 })
 
 api.put("/crearProfesor", (req, res) => {
-    console.log(`CREAR_PROFESOR - ${req.body}`) // objeto json con el profesor
     try {
+        console.log(`CREAR_PROFESOR - ${req.body.apellido}`) // objeto json con el profesor
         contenedorProfesor.crearProfesor(
             req.body.email,
             req.body.nombre,
@@ -337,9 +338,9 @@ api.put("/crearProfesor", (req, res) => {
             req.body.direccion,
             req.body.horaInicio,
             req.body.horaFin
-        )
-
-        res.send(true)
+        ).then(profesores => {
+            res.send(profesores)
+        })
     } catch (e) {
         console.log(e)
     }
