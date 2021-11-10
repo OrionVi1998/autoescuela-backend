@@ -77,8 +77,8 @@ class ContenedorAlumno {
         return this.alumnos.find(a => a.id_alumno === alumno.id_alumno)
     }
 
-
 }
+
 
 class Alumno {
     id_alumno;
@@ -108,6 +108,7 @@ class Alumno {
         this.cantMinutosClaseRestantes -= duracionClase
         Storebroker.editarAlumno(this)
     }
+
 
     devolverClase(duracionClase) {
         this.cantClasesRestantes += 1
