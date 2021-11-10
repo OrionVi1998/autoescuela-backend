@@ -144,7 +144,7 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             const rows = await conn.query("UPDATE alumnos SET nombre=?, apellido=?, telefono=?, direccion=?, cantClasesRestantes=?, cantHorasClaseRestantes=? WHERE ID_ALUMNO=?",
-                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantHorasClaseRestantes, alumno.id_alumno]);
+                [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantMinutosClaseRestantes, alumno.id_alumno]);
             console.log(rows); // TODO
 
         } catch (err) {
