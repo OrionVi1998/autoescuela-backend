@@ -126,7 +126,7 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             // Cuando se crea un alumno las horas tienen que ser 0
-            const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantHorasClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
+            const rows = await conn.query("INSERT INTO alumnos (nombre, apellido, telefono, direccion, cantClasesRestantes, cantMinutosClaseRestantes) VALUES (?, ?, ?, ?, ?, ?)",
                 [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, 0, 0]);
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
@@ -143,7 +143,7 @@ class Storebroker {
         let conn;
         try {
             conn = await pool.getConnection();
-            const rows = await conn.query("UPDATE alumnos SET nombre=?, apellido=?, telefono=?, direccion=?, cantClasesRestantes=?, cantHorasClaseRestantes=? WHERE ID_ALUMNO=?",
+            const rows = await conn.query("UPDATE alumnos SET nombre=?, apellido=?, telefono=?, direccion=?, cantClasesRestantes=?, cantMinutosClaseRestantes=? WHERE ID_ALUMNO=?",
                 [alumno.nombre, alumno.apellido, alumno.telefono, alumno.direccion, alumno.cantClasesRestantes, alumno.cantMinutosClaseRestantes, alumno.id_alumno]);
             console.log(rows); // TODO
 

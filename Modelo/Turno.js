@@ -77,10 +77,10 @@ class ContenedorTurno {
 
         if (disponib) {
 
-            if (alumno.cantClasesRestantes -= 1 < 0) {
+            if ((alumno.cantClasesRestantes - 1) < 0) {
                 return false
 
-            } else if (alumno.cantMinutosClaseRestantes -= duracionClase < 0) {
+            } else if (alumno.cantMinutosClaseRestantes - duracionClase < 0) {
                 return false
 
             } else {
