@@ -60,7 +60,6 @@ api.get(`/login`, (req, res) => {
     if (admin) {res.send({session: true, credencial:admin.credencial})}
     else if (profesor) {res.send({session: true, credencial:profesor.credencial})}
     else {res.send({session:false})}
-
 })
 
 api.get(`/`, (req, res) => {
@@ -68,9 +67,13 @@ api.get(`/`, (req, res) => {
 })
 
 api.get(`/getPaquetes/`, (req, res) => {
-    let paquetes_retorno = contenedorPaquete.getPaquetesVisibles()
-    // console.log(`GET PAQUETES - ENVIANDO`)
-    res.send(paquetes_retorno)
+    try {
+        let paquetes_retorno = contenedorPaquete.getPaquetesVisibles()
+        console.log(`GET PAQUETES - ENVIANDO`)
+        res.send(paquetes_retorno)
+    } catch (e) {
+        console.log(e)
+    }
 })
 
 
@@ -372,13 +375,14 @@ api.delete("/eliminarProfesor", (req, res) => {
 })
 
 api.put("/crearPaquete/", (req, res) => {
-    console.log(req.body)
-    let nombre, cantClases, durClases, precio;
-    ({nombre, cantClases, durClases, precio} = req.body)
 
     try {
-        contenedorPaquete.crearPaquete(nombre, Number(cantClases), Number(durClases), Number(precio))
-        res.send(true)
+        console.log(`CREAR PAQUETE - ${req.body}`)
+        let nombre, cantClases, durClases, precio;
+        ({nombre, cantClases, durClases, precio} = req.body)
+        contenedorPaquete.crearPaquete(nombre, Number(cantClases), Number(durClases), Number(precio)).then(paquetes => {
+            res.send(paquetes)
+        })
     } catch (e) {
         console.log(e)
     }
@@ -388,11 +392,11 @@ api.put("/crearPaquete/", (req, res) => {
 
 api.post("/editarPaquete/", (req, res) => {
 
-    console.log(`EDITAR PAQUETE - ${req.body.id_paquete}`)
 
     try {
-        contenedorPaquete.editarPaquete(req.body)
-        res.send(true)
+        console.log(`EDITAR PAQUETE - ${req.body.id_paquete}`)
+        let paquetes = contenedorPaquete.editarPaquete(req.body)
+        res.send(paquetes)
     } catch (e) {
         console.log(e)
     }
@@ -401,12 +405,11 @@ api.post("/editarPaquete/", (req, res) => {
 
 api.delete("/eliminarPaquete/", (req, res) => {
 
-    console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
-    console.log(req.query)
 
     try {
-        contenedorPaquete.eliminarPaquete({id_paquete: Number(req.query.id_paquete)})
-        res.send(true)
+        console.log(`ELIMINAR PAQUETE - ${req.query.id_paquete}`)
+        let paquetes = contenedorPaquete.eliminarPaquete({id_paquete: Number(req.query.id_paquete)})
+        res.send(paquetes)
     } catch (e) {
         console.log(e)
     }
