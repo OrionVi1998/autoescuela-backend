@@ -82,15 +82,20 @@ class ContenedorPaquete {
                 }
             }
         );
-        return this.paquetes
+        return this.paquetes;
     }
 
     eliminarPaquete(paquete) {
-        paquete = this.paquetes.find(p => p.id_paquete === paquete.id_paquete)
-        paquete.estado = 0;
         Storebroker.eliminarPaquete(paquete);
-        this.paquetes = this.paquetes.filter(p => paquete.id_paquete !== p.id_paquete)
-        this.paquetes.push(paquete);
+        paquete.estado = 0;
+        this.paquetes = this.paquetes.map(p => {
+                if (p.id_paquete === paquete.id_paquete) {
+                    return paquete
+                } else {
+                    return p
+                }
+            }
+        );
         return this.paquetes
     }
 }
