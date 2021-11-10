@@ -45,41 +45,58 @@ class ContenedorPagos {
         return this.pagos.filter(p => p.alumno_id === alumno.id_alumno);
     }
 
-    crearPago(alumno_id, paquete_id, monto, fechaRealizada, pagado) {
+    async crearPago(alumno_id, paquete_id, monto, fechaRealizada, pagado) {
 
-        let pago = new Pago(
-            1000,
-            alumno_id,
-            paquete_id,
-            monto,
-            fechaRealizada,
-            pagado
-        );
+        return new Promise((resolve, reject) => {
+            try {
+                let pago = new Pago(
+                    1000,
+                    alumno_id,
+                    paquete_id,
+                    monto,
+                    fechaRealizada,
+                    pagado
+                );
+                Storebroker.crearPago(pago).then(r => {
+                    pago.id_pago = r
+                    this.pagos.push(pago)
+                    resolve(this.pagos)
+                });
+            } catch (e) {
+                console.log(e)
+                reject(e)
+            }
+        })
 
-        Storebroker.crearPago(pago).then(r => {
-            pago.id_pago = r
-            this.pagos.push(pago)
-            // console.log(this.pagos)
-        });
+
     }
 
-    generarPagos(paquete, alumno) {
+    async generarPagos(paquete, alumno) {
 
-        let fechaSenia = new Date()
-        // fechaSenia.setUTCMonth(fechaSenia.getUTCMonth()-1)
-        fechaSenia.setUTCHours(fechaSenia.getUTCHours()-3)
+        return new Promise((resolve, reject) => {
+            try {
+                let fechaSenia = new Date()
+                // fechaSenia.setUTCMonth(fechaSenia.getUTCMonth()-1)
+                fechaSenia.setUTCHours(fechaSenia.getUTCHours()-3)
+
+                if (paquete.cantClases > 1) {
+                    let monto_inicial = Math.round(paquete.precio*0.1)
+                    let primerPago = Math.round((paquete.precio - monto_inicial)/ 2)
+
+                    let p1 = this.crearPago(alumno.id_alumno, paquete.id_paquete, monto_inicial, fechaSenia, 1)
+                    let p2 = this.crearPago(alumno.id_alumno, paquete.id_paquete, primerPago, null, 0)
+                    let p3 = this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio-monto_inicial-primerPago, null, 0)
+                    Promise.all([p1,p2,p3]).then(() => resolve(this.pagos))
+                } else {
+                    this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio, fechaSenia, 1).then(() => resolve(this.pagos))
+                }
+            } catch (e) {
+                console.log(e)
+                reject(e)
+            }
+        })
 
 
-        if (paquete.cantClases > 1) {
-            let monto_inicial = Math.round(paquete.precio*0.1)
-            let primerPago = Math.round((paquete.precio - monto_inicial)/ 2)
-            this.crearPago(alumno.id_alumno, paquete.id_paquete, monto_inicial, fechaSenia, 1)
-            this.crearPago(alumno.id_alumno, paquete.id_paquete, primerPago, null, 0)
-            this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio-monto_inicial-primerPago, null, 0)
-
-        } else {
-            this.crearPago(alumno.id_alumno, paquete.id_paquete, paquete.precio, fechaSenia, 1)
-        }
     }
 
     getPrimerPago(alumno, paquete) {

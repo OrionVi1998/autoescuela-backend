@@ -90,18 +90,19 @@ api.post(`/asociarPaquete/`, (req, res) => {
         alumno = contenedorAlumno.getAlumno(alumno)
         paqueteAsociar = contenedorPaquete.getPaquete(paqueteAsociar.id_paquete)
 
-        contenedorPagos.generarPagos(paqueteAsociar, alumno)
+        contenedorPagos.generarPagos(paqueteAsociar, alumno).then(() => {
+            let clasesAgregar = paqueteAsociar.cantClases
 
-        let clasesAgregar = paqueteAsociar.cantClases
+            while (clasesAgregar !== 0) {
+                clasesAgregar-=1
+                alumno.devolverClase(paqueteAsociar.durClases)
+            }
 
-        while (clasesAgregar !== 0) {
-            clasesAgregar-=1
-            alumno.devolverClase(paqueteAsociar.durClases)
-        }
+            let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
 
-        let pagos_alumno_ret = mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(alumno.id_alumno))
+            res.send(pagos_alumno_ret)
+        })
 
-        res.send(pagos_alumno_ret)
     } catch (e) {
         console.log(e)
         res.send(false)
