@@ -328,8 +328,8 @@ api.get("/getProfesores/", (req, res) => {
 })
 
 api.put("/crearProfesor", (req, res) => {
-    console.log(`CREAR_PROFESOR - ${req.body}`) // objeto json con el profesor
     try {
+        console.log(`CREAR_PROFESOR - ${req.body.apellido}`) // objeto json con el profesor
         contenedorProfesor.crearProfesor(
             req.body.email,
             req.body.nombre,
@@ -338,9 +338,9 @@ api.put("/crearProfesor", (req, res) => {
             req.body.direccion,
             req.body.horaInicio,
             req.body.horaFin
-        )
-
-        res.send(true)
+        ).then(profesores => {
+            res.send(profesores)
+        })
     } catch (e) {
         console.log(e)
     }
