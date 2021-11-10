@@ -44,21 +44,29 @@ class ContenedorPaquete {
     }
 
 
-    crearPaquete(nombre, cantClases, durClases, precio) {
+    async crearPaquete(nombre, cantClases, durClases, precio) {
 
-        let paq = new Paquete(
-            9999,
-            nombre,
-            cantClases,
-            durClases,
-            precio,
-            1
-        );
+        return new Promise((resolve, reject) => {
+            try {
+                let paq = new Paquete(
+                    9999,
+                    nombre,
+                    cantClases,
+                    durClases,
+                    precio,
+                    1
+                );
 
-        Storebroker.crearPaquete(paq).then(r => {
-            paq.id_paquete = r
-            this.paquetes.push(paq)
-            // console.log(this.paquetes)
+                Storebroker.crearPaquete(paq).then(r => {
+                    paq.id_paquete = r
+                    this.paquetes.push(paq)
+                    resolve(this.paquetes)
+                })
+            } catch (e) {
+                console.log(e)
+                reject(e)
+            }
+
         })
 
     }
@@ -66,7 +74,6 @@ class ContenedorPaquete {
     editarPaquete(paquete) {
 
         Storebroker.editarPaquete(paquete)
-
         this.paquetes = this.paquetes.map(p => {
                 if (p.id_paquete === paquete.id_paquete) {
                     return paquete
@@ -75,17 +82,21 @@ class ContenedorPaquete {
                 }
             }
         );
-
-
+        return this.paquetes;
     }
 
-    eliminarPaquete(paquete) { //TODO
-        paquete = this.paquetes.find(p => p.id_paquete === paquete.id_paquete)
-        paquete.estado = 0;
+    eliminarPaquete(paquete) {
         Storebroker.eliminarPaquete(paquete);
-        this.paquetes = this.paquetes.filter(p => paquete.id_paquete !== p.id_paquete)
-        this.paquetes.push(paquete);
-
+        paquete.estado = 0;
+        this.paquetes = this.paquetes.map(p => {
+                if (p.id_paquete === paquete.id_paquete) {
+                    return paquete
+                } else {
+                    return p
+                }
+            }
+        );
+        return this.paquetes
     }
 }
 
