@@ -77,14 +77,22 @@ class ContenedorTurno {
 
         if (disponib) {
 
-            Storebroker.crearTurno(tur).then(r => {
-                alumno.usarClase(duracionClase)
-                tur.id_turno = r
-                this.turnos.push(tur)
-                // console.log(tur.id_turno)
-            })
+            if ((alumno.cantClasesRestantes - 1) < 0) {
+                return false
 
-            return true
+            } else if (alumno.cantMinutosClaseRestantes - duracionClase < 0) {
+                return false
+
+            } else {
+                Storebroker.crearTurno(tur).then(r => {
+                    alumno.usarClase(duracionClase)
+                    tur.id_turno = r
+                    this.turnos.push(tur)
+                    // console.log(tur.id_turno)
+                })
+                return true
+
+            }
 
         } else {
             return false
