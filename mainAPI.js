@@ -57,9 +57,13 @@ api.get(`/login`, (req, res) => {
 
     console.log(`LOGIN ATTEMPT: ${req.query.email} - A: ${admin} - P: ${profesor} `)
 
-    if (admin) {res.send({session: true, credencial:admin.credencial})}
-    else if (profesor) {res.send({session: true, credencial:profesor.credencial})}
-    else {res.send({session:false})}
+    if (admin) {
+        res.send({session: true, credencial: admin.credencial})
+    } else if (profesor) {
+        res.send({session: true, credencial: profesor.credencial})
+    } else {
+        res.send({session: false})
+    }
 })
 
 api.get(`/`, (req, res) => {
@@ -94,7 +98,7 @@ api.post(`/asociarPaquete/`, (req, res) => {
             let clasesAgregar = paqueteAsociar.cantClases
 
             while (clasesAgregar !== 0) {
-                clasesAgregar-=1
+                clasesAgregar -= 1
                 alumno.devolverClase(paqueteAsociar.durClases)
             }
 
@@ -113,7 +117,10 @@ api.post(`/asociarPaquete/`, (req, res) => {
 
 api.get(`/getPagos/`, (req, res) => {
     let alumnos = contenedorAlumno.getAlumnos()
-    let pagos_retorno = alumnos.map(al => ({id_alumno:al.id_alumno, pagos: mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(al.id_alumno))}))
+    let pagos_retorno = alumnos.map(al => ({
+        id_alumno: al.id_alumno,
+        pagos: mediadorPagosPaqueteAlumnos(contenedorPagos, contenedorPaquete, Number(al.id_alumno))
+    }))
     console.log(`GET PAGOS - ENVIANDO`)
     res.send(pagos_retorno)
 })
@@ -210,7 +217,7 @@ api.delete("/eliminarTurno/", (req, res) => {
 
     try {
         console.log("ELIMINAR TURNO:", req.query.id_turno)
-        let alum =  contenedorAlumno.getAlumno({id_alumno: Number(req.query.alumno_id)});
+        let alum = contenedorAlumno.getAlumno({id_alumno: Number(req.query.alumno_id)});
         let duracionClase = ((Number(Turno.convertirFechaStringADate(req.query.fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(req.query.fechaHoraInicio).getTime())) / 60000)
         alum.devolverClase(duracionClase)
         res.send(contenedorTurno.eliminarTurno(req.query))
@@ -274,20 +281,31 @@ api.post("/editarAlumno/", (req, res) => {
 api.get("/eliminarCheckAlumno/", (req, res) => {
 
 
-    let alumno = JSON.parse(req.query.alumno)
+    try {
+        let alumno = JSON.parse(req.query.alumno)
+        //Check cuando el alumno puede ser eliminado
 
-    //Check cuando el alumno puede ser eliminado
-    //No tenga pagos pendientes
-    //No tenga clases pendientes
+        //No tenga pagos pendientes
+        let pagosPendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0).length === 0
+        //No tenga clases pendientes
+        let alumnoClasesTiempRestantes = alumno.cantMinutosClaseRestantes === 0 //TODO: Decide for one
+        //TODO:
+        //No tenga clases futuras
+        let tieneClasesFuturas;
 
-    let pendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0)
-    if ( pendientes.length === 0 && alumno.cantClasesRestantes === 0) {
-        // console.log(pendientes.length, alumno.cantClasesRestantes)
-        //TODO TESTING
-        res.send(true)
-    } else {
+        console.log(`CHECK ELIMINAR ALUMNO - ${alumno.id_alumno} - ${pagosPendientes.length}&${alumno.cantClasesRestantes}`)
+        if (pagosPendientes && alumnoClasesTiempRestantes) {
+            res.send(true)
+        } else {
+            res.send(false)
+        }
+
+
+    } catch (e) {
+        console.log(e)
         res.send(false)
     }
+
 
     // let paquetes = [];
     // contenedorPagos.getPagosAlumno(alumno).map(pago => {
@@ -304,7 +322,6 @@ api.get("/eliminarCheckAlumno/", (req, res) => {
     //     console.log(primerPago)
     // })
 
-    console.log(`CHECK ELIMINAR ALUMNO - ${alumno.id_alumno} - ${pendientes.length}&${alumno.cantClasesRestantes}`)
 })
 
 api.delete("/eliminarAlumno/", (req, res) => {
@@ -370,7 +387,7 @@ api.delete("/eliminarProfesor", (req, res) => {
         contenedorProfesor.eliminarProfesor(profesores_eliminar)
         contenedorTurno.desvincularProfesor(profesores_eliminar)
         res.send(true)
-    }catch (e) {
+    } catch (e) {
         console.log(e)
     }
 })
