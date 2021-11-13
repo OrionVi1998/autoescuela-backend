@@ -50,6 +50,10 @@ class ContenedorTurno {
         return this.turnos.filter(t => t.usuario_id === profesor.id_usuario)
     }
 
+    getTurnosAlumno(alumno) {
+        return this.turnos.filter(t => t.alumno_id === alumno.id_alumno)
+    }
+
 
     crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente, alumno, duracionClase) {
 
