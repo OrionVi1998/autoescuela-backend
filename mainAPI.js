@@ -196,12 +196,15 @@ api.put(`/crearTurno/`, (req, res) => {
 api.post(`/editarTurno/`, (req, res) => {
 
     try {
+        console.log(contenedorTurno.turnos)
         console.log("mainapi editar paquete:", req.body)
 
         // El " / 60000" es para convertir de milisegundos a minutos.
         let duracionClase = ((Number(Turno.convertirFechaStringADate(req.body.fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(req.body.fechaHoraInicio).getTime())) / 60000)
 
-        if (contenedorProfesor.getProfesor({id_usuario: req.body.usuario_id}).verificarDispHoraria(Turno.convertirFechaStringADate(req.body.fechaHoraInicio), duracionClase)) {
+        let profesor = contenedorProfesor.getProfesor({id_usuario: req.body.usuario_id});
+
+        if (profesor.verificarDispHoraria(Turno.convertirFechaStringADate(req.body.fechaHoraInicio), duracionClase)) {
             res.send(contenedorTurno.editarTurno(req.body))
 
         } else {
