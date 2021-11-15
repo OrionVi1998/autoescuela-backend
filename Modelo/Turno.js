@@ -18,7 +18,7 @@ class ContenedorTurno {
             let async_result = await Storebroker.getTurnos()
             async_result = async_result.map(t => {
 
-                // si en la base de datos tenemos una date: 2021-10-11T15:00:00.00Z, si no hacemos esta conversion
+                // supongamos que en la base de datos tenemos una date: 2021-10-11T15:00:00.00Z, si no hacemos esta conversion
                 // de horas entonces llegaria como: 2021-10-11T18:00:00.00Z
                 t.fechaHoraInicio.setUTCHours(Number(t.fechaHoraInicio.getUTCHours() - 3))
                 t.fechaHoraFin.setUTCHours(Number(t.fechaHoraFin.getUTCHours() - 3))
@@ -330,7 +330,11 @@ class Turno {
 
     static convertirFechaStringADate(fechaHoraString) {
 
-        if (fechaHoraString.includes(" ")) {
+        // en caso de que el objeto ya sea de tipo Date, lo devolvemos, no hay necesidad de convertirlo
+        if (typeof(fechaHoraString) === Object) {
+            return fechaHoraString
+
+        } else if (fechaHoraString.includes(" ")) {
 
             // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
             let datetimeTurno = fechaHoraString.split(' ')
