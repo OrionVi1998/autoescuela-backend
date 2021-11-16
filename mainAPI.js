@@ -9,6 +9,7 @@ const {Pago, ContenedorPagos} = require("./Modelo/Pago")
 const {Administrador, ContenedorAdministrador} = require("./Modelo/Administrador")
 const {Turno, ContenedorTurno} = require("./Modelo/Turno")
 const {mediadorAsociarPaquete, mediadorPagosPaqueteAlumnos} = require("./Modelo/Mediadores")
+let moment = require('moment'); // require
 
 let contenedorPagos;
 let contenedorPaquete;
@@ -144,69 +145,91 @@ api.put(`/registrarPago`, ((req, res) => {
 }))
 
 api.get(`/getTurnos/`, (req, res) => {
-    let turnos_retorno = contenedorTurno.getTurnos()
-    // console.log(`GET TURNOS - ENVIANDO`)
+    try {
+        console.log(`GET TURNOS - ENVIANDO`)
+        let turnos_retorno = contenedorTurno.getTurnos()
 
-    turnos_retorno.map((t) => {
+        turnos_retorno.map((t) => {
+            let alumno = contenedorAlumno.getAlumno({id_alumno: t.alumno_id})
+            if (t.usuario_id !== null) {
+                let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
+                t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
+            } else {
+                t.title = `${alumno.nombre} ${alumno.apellido} -> FALTA PROFESOR`
+            }
+        })
 
-        let alumno = contenedorAlumno.getAlumno({id_alumno: t.alumno_id})
-        if (t.usuario_id !== null) {
-            let profe = contenedorProfesor.getProfesor({id_usuario: t.usuario_id})
-            t.title = `${alumno.nombre} ${alumno.apellido} con ${profe.nombre} ${profe.apellido}`
-        } else {
-            t.title = `${alumno.nombre} ${alumno.apellido} -> FALTA PROFESOR`
-        }
+        res.send(turnos_retorno)
+    } catch (e) {
+        console.log(e)
+    }
 
 
-    })
-
-    res.send(turnos_retorno)
 })
 
 api.put(`/crearTurno/`, (req, res) => {
 
-    console.log("mainapi crear:", req.body) // objeto json con el turno
-    let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
-    ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
-
     try {
+        console.log("CREAR TURNO", req.body) // objeto json con el turno
+        let alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin;
+        ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
+
 
         // El " / 60000" es para convertir de milisegundos a minutos.
-        let duracionClase = ((Number(Turno.convertirFechaStringADate(fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(fechaHoraInicio).getTime())) / 60000)
+        let duracionClase = (moment(fechaHoraFin).toDate().getTime() - moment(fechaHoraInicio).toDate().getTime()) / 60000
+        let profesor = contenedorProfesor.getProfesor({id_usuario: usuario_id})
 
-        // patron de mediador
-        if (contenedorProfesor.getProfesor({id_usuario: usuario_id}).verificarDispHoraria(Turno.convertirFechaStringADate(fechaHoraInicio), duracionClase)) {
+        console.log(profesor)
+
+        if (profesor.verificarDispHoraria(moment(fechaHoraInicio).toDate(), duracionClase)) {
 
             let alumno = contenedorAlumno.getAlumno({id_alumno: alumno_id})
 
-            // devolvemos la respuesta de la creacion de turno, "true" o "false"
-            res.send(contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1, alumno, duracionClase))
-
+            contenedorTurno.crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, 1, alumno, duracionClase)
+            .then(r => {
+                res.send(r)
+            }).catch(e => {
+                throw (e)
+            })
         } else {
-
             // si no hay disponibilidad horaria del profesor, devolvemos false
-            res.send(false)
+            res.send({
+                success: false,
+                value: {content: "El profesor no se encuentra disponible en este horario."}
+            })
         }
-
     } catch (e) {
         console.log(e)
+        res.send(false)
     }
 })
 
 api.post(`/editarTurno/`, (req, res) => {
 
     try {
-        console.log(contenedorTurno.turnos)
-        console.log("mainapi editar paquete:", req.body)
+        console.log("EDITAR TURNO:", req.body)
 
         // El " / 60000" es para convertir de milisegundos a minutos.
-        let duracionClase = ((Number(Turno.convertirFechaStringADate(req.body.fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(req.body.fechaHoraInicio).getTime())) / 60000)
+        // let duracionClase = ((Number(Turno.convertirFechaStringADate(req.body.fechaHoraFin).getTime() - Number(Turno.convertirFechaStringADate(req.body.fechaHoraInicio).getTime())) / 60000))
+        let duracionClase = (moment(req.body.fechaHoraFin).toDate().getTime() - moment(req.body.fechaHoraInicio).toDate().getTime()) / 60000
+
 
         let profesor = contenedorProfesor.getProfesor({id_usuario: req.body.usuario_id});
+        let alumno = contenedorAlumno.getAlumno({id_alumno: req.body.alumno_id})
+        if (profesor.verificarDispHoraria(moment(req.body.fechaHoraInicio).toDate(), duracionClase)) {
 
-        if (profesor.verificarDispHoraria(Turno.convertirFechaStringADate(req.body.fechaHoraInicio), duracionClase)) {
-            res.send(contenedorTurno.editarTurno(req.body))
+            let tur = contenedorTurno.turnos.find(t => req.body.id_turno === t.id_turno)
+            let turnosCheck = contenedorTurno.getTurnos().filter(t => t.id_turno !== tur.id_turno)
 
+            let profesorDisponib = turnosCheck.filter(t => t.usuario_id === profesor.id_usuario).every(t => (tur.verificarCompatHoraria(t)))
+            let alumnoDisponib = turnosCheck.filter(t => t.alumno_id === alumno.id_alumno).every(t => (tur.verificarCompatHoraria(t)))
+
+            if (profesorDisponib && alumnoDisponib) {
+                let editarTurno = contenedorTurno.editarTurno(req.body)
+                res.send(editarTurno)
+            } else {
+                res.send(false)
+            }
         } else {
             res.send(false)
         }
@@ -221,7 +244,7 @@ api.delete("/eliminarTurno/", (req, res) => {
     try {
         console.log("ELIMINAR TURNO:", req.query.id_turno)
         let alum = contenedorAlumno.getAlumno({id_alumno: Number(req.query.alumno_id)});
-        let duracionClase = ((Number(Turno.convertirFechaStringADate(req.query.fechaHoraFin).getTime()) - Number(Turno.convertirFechaStringADate(req.query.fechaHoraInicio).getTime())) / 60000)
+        let duracionClase = (moment(req.body.fechaHoraFin).toDate().getTime() - moment(req.body.fechaHoraInicio).toDate().getTime()) / 60000
         alum.devolverClase(duracionClase)
         res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
@@ -329,9 +352,9 @@ api.get("/eliminarCheckAlumno/", (req, res) => {
 
 api.delete("/eliminarAlumno/", (req, res) => {
 
-    console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
 
     try {
+        console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
         contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)});
         contenedorTurno.eliminarTurnosAlumno({id_alumno: Number(req.query.id_alumno)});
         res.send(true)

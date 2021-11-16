@@ -9,7 +9,8 @@ config = {
     "user": process.env.MARIADB_US,
     "password": process.env.MARIADB_PS,
     "database": process.env.MARIADB_DB,
-    "port": Number(process.env.MARIADB_PORT)
+    "port": Number(process.env.MARIADB_PORT),
+    "timezone":"+00:00"
 }
 
 

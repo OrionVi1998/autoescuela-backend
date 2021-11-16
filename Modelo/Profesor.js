@@ -1,5 +1,6 @@
 const Usuario = require("./Usuario")
 const Storebroker = require("./storebroker")
+const moment = require("moment");
 
 class ContenedorProfesor {
 
@@ -74,10 +75,29 @@ class ContenedorProfesor {
     }
 
     editarProfesor(profesor) {
+
+        let oldProfesor = this.profesores.find(p => profesor.id_usuario === p.id_usuario)
+        Object.keys(oldProfesor).map(k => {
+            if (typeof profesor[k] === 'undefined') {
+                profesor[k] = oldProfesor[k]
+            } else {
+                profesor[k] = profesor[k]
+            }
+        })
+
         Storebroker.editarProfesor(profesor)
         this.profesores = this.profesores.map(p => {
                 if (p.id_usuario === profesor.id_usuario) {
-                    return profesor
+                    return new Profesor(
+                        profesor.id_usuario,
+                        profesor.email,
+                        profesor.credencial,
+                        profesor.nombre,
+                        profesor.apellido,
+                        profesor.telefono,
+                        profesor.horaInicio,
+                        profesor.horaFin
+                    )
                 } else {
                     return p
                 }
@@ -125,35 +145,21 @@ class Profesor extends Usuario {
 
         // convertimos las fechas en mainAPI
 
-        // el -3 es para pasar el horario a GMT-3 (Argentina Standard Time)
         let profHoraInicio = new Date(turnoFechaInicio.getFullYear(),
                                       turnoFechaInicio.getMonth(),
                                       turnoFechaInicio.getDate(),
-                                      Number(horaInicio[0])-3,
+                                      Number(horaInicio[0]),
                                       Number(horaInicio[1]),
                                       0)
 
-        // el -3 es para pasar el horario a GMT-3 (Argentina Standard Time)
         let profHoraFin = new Date(turnoFechaInicio.getFullYear(),
                                    turnoFechaInicio.getMonth(),
                                    turnoFechaInicio.getDate(),
-                                   Number(horaFin[0])-3,
+                                   Number(horaFin[0]),
                                    Number(horaFin[1]),
                                    0)
 
-
-        if (profHoraInicio.getTime() <= turnoFechaInicio.getTime() &&
-            (turnoFechaInicio.getTime() + (duracionClase * 60)) <= profHoraFin.getTime()) {
-
-            // console.log(profHoraInicio.getTime() < turnoFechaInicio.getTime() && (turnoFechaInicio.getTime() + duracionClase) < profHoraFin.getTime())
-
-            // aca solo chequeamos si tiene disponibilidad horaria
-            // el trabajo de chequear si tiene turnos en este horario seria de turnos
-            return true;
-
-        } else {
-            return false
-        }
+        return (profHoraInicio.getTime() <= turnoFechaInicio.getTime() && (turnoFechaInicio.getTime() + (duracionClase * 60000)) <= profHoraFin.getTime());
     }
 
 }
