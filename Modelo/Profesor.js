@@ -95,6 +95,7 @@ class ContenedorProfesor {
                         profesor.nombre,
                         profesor.apellido,
                         profesor.telefono,
+                        profesor.direccion,
                         profesor.horaInicio,
                         profesor.horaFin
                     )
