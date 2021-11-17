@@ -363,9 +363,7 @@ api.delete("/eliminarAlumno/", (req, res) => {
     try {
 
         console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
-        contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)});
-
-        contenedorTurno.eliminarTurnosAlumno({id_alumno: Number(req.query.id_alumno)});
+        contenedorTurno.eliminarTurnosAlumno(Number(req.query.id_alumno));
         contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)});
         res.send(true)
     } catch (e) {
