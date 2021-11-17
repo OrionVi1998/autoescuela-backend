@@ -175,6 +175,15 @@ api.put(`/crearTurno/`, (req, res) => {
         ({alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin} = req.body)
 
 
+        if (moment.utc(fechaHoraInicio).toDate().getTime() < new Date().getTime()) {
+            res.send({
+                success: false,
+                value: {content: "No se pueden crear turnos anteriores a la fecha actual"}
+            })
+            return;
+        }
+
+
         // El " / 60000" es para convertir de milisegundos a minutos.
         let duracionClase = (moment(fechaHoraFin).toDate().getTime() - moment(fechaHoraInicio).toDate().getTime()) / 60000
         let profesor = contenedorProfesor.getProfesor({id_usuario: usuario_id})
@@ -214,12 +223,26 @@ api.post(`/editarTurno/`, (req, res) => {
         let duracionClase = (moment(req.body.fechaHoraFin).toDate().getTime() - moment(req.body.fechaHoraInicio).toDate().getTime()) / 60000
 
 
+        if (moment.utc(req.body.fechaHoraInicio).toDate().getTime() < new Date().getTime()) {
+            res.send({
+                success: false,
+                value: {content: "No se pueden crear turnos anteriores a la fecha actual"}
+            })
+            return;
+        }
+
         let profesor = contenedorProfesor.getProfesor({id_usuario: req.body.usuario_id});
         let alumno = contenedorAlumno.getAlumno({id_alumno: req.body.alumno_id})
         if (profesor.verificarDispHoraria(moment(req.body.fechaHoraInicio).toDate(), duracionClase)) {
 
-            let tur = contenedorTurno.turnos.find(t => req.body.id_turno === t.id_turno)
-            let turnosCheck = contenedorTurno.getTurnos().filter(t => t.id_turno !== tur.id_turno)
+            let tur = new Turno(req.body.id_turno,
+                req.body.alumno_id,
+                req.body.usuario_id,
+                moment.utc(req.body.fechaHoraInicio).toDate(),
+                moment.utc(req.body.fechaHoraFin).toDate(),
+                req.body.profesorPresente)
+
+            let turnosCheck = contenedorTurno.turnos.filter(t => t.id_turno !== tur.id_turno)
 
             let minutosOriginales = (moment(tur.fechaHoraFin).toDate().getTime() - moment(tur.fechaHoraInicio).toDate().getTime()) / 60000
             let diffTurnos = duracionClase - minutosOriginales

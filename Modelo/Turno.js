@@ -289,52 +289,18 @@ class Turno {
 
     verificarCompatHoraria(turno) {
 
-        const inBetween = (time) => {
-            return (this.fechaHoraInicio.getTime() < time && this.fechaHoraFin.getTime() > time)
+        if (this.fechaHoraInicio.getTime() > turno.fechaHoraInicio.getTime()) { //
+            return turno.fechaHoraFin.getTime() <= this.fechaHoraInicio.getTime() //
+        } else {
+            return this.fechaHoraFin.getTime() <= turno.fechaHoraInicio.getTime() //
         }
 
-        const same = (time1, time2) => {
-            return (this.fechaHoraInicio.getTime() === time1 && this.fechaHoraFin.getTime() === time2)
-        }
-
-        console.log(
-            "fi",this.fechaHoraInicio, turno.fechaHoraInicio ,this.fechaHoraFin,
-            "ff", this.fechaHoraInicio, turno.fechaHoraFin ,this.fechaHoraFin,
-            inBetween(turno.fechaHoraInicio.getTime()),
-            inBetween(turno.fechaHoraFin.getTime()),
-            same(turno.fechaHoraInicio.getTime(), turno.fechaHoraFin.getTime())
-        )
-
-        return !(
-            inBetween(turno.fechaHoraInicio.getTime()) ||
-            inBetween(turno.fechaHoraFin.getTime()) ||
-            same(turno.fechaHoraInicio.getTime(), turno.fechaHoraFin.getTime())
-        )
+        // return (
+        //     this.fechaHoraFin.getTime() <= turno.fechaHoraInicio.getTime() ||
+        //     this.fechaHoraInicio.getTime() >= turno.fechaHoraFin.getTime()
+        // )
 
     }
-
-
-    // verificarPoliticaCancel(turno) {
-
-        /* Primero construimos los objetos Date
-        * asi podemos acceder a la funcionalidad de comparacion
-         */
-
-        //CHECK: No se usa?
-
-        // let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
-        // let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
-        //
-        // if (reservaThisTurnoInicio.getYear() === reservaTurnoInicio.getYear() &&
-        //     reservaThisTurnoInicio.getMonth() === reservaTurnoInicio.getMonth()) {
-        //
-        //     if ((reservaThisTurnoInicio.getDay() - reservaTurnoInicio.getDay()) >= 1) {
-        //         return true;
-        //     }
-        //
-        //     return false;
-        // }
-    // }
 
 }
 
