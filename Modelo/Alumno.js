@@ -55,10 +55,28 @@ class ContenedorAlumno {
     }
 
     editarAlumno(alumno) {
+
+        let oldAlumno = this.alumnos.find(a => alumno.id_alumno === a.id_alumno)
+        Object.keys(oldAlumno).map(k => {
+            if (typeof alumno[k] === 'undefined') {
+                alumno[k] = oldAlumno[k]
+            } else {
+                alumno[k] = alumno[k]
+            }
+        })
+
         Storebroker.editarAlumno(alumno)
         this.alumnos = this.alumnos.map(a => {
                 if (a.id_alumno === alumno.id_alumno) {
-                    return alumno
+                    return new Alumno(
+                        alumno.id_alumno,
+                        alumno.nombre,
+                        alumno.apellido,
+                        alumno.telefono,
+                        alumno.direccion,
+                        alumno.cantClasesRestantes,
+                        alumno.cantMinutosClaseRestantes
+                    )
                 } else {
                     return a
                 }

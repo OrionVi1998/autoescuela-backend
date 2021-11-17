@@ -1,4 +1,5 @@
 const Storebroker = require('./storebroker')
+let moment = require('moment'); // require
 
 class ContenedorTurno {
 
@@ -18,10 +19,6 @@ class ContenedorTurno {
             let async_result = await Storebroker.getTurnos()
             async_result = async_result.map(t => {
 
-                // supongamos que en la base de datos tenemos una date: 2021-10-11T15:00:00.00Z, si no hacemos esta conversion
-                // de horas entonces llegaria como: 2021-10-11T18:00:00.00Z
-                t.fechaHoraInicio.setUTCHours(Number(t.fechaHoraInicio.getUTCHours() - 3))
-                t.fechaHoraFin.setUTCHours(Number(t.fechaHoraFin.getUTCHours() - 3))
 
                 return new Turno(
                     t.ID_TURNO,
@@ -57,63 +54,75 @@ class ContenedorTurno {
 
     crearTurno(alumno_id, usuario_id, fechaHoraInicio, fechaHoraFin, profesorPresente, alumno, duracionClase) {
 
-        let tur = new Turno(
-            500,
-            alumno_id,
-            usuario_id,
-            Turno.convertirFechaStringADate(fechaHoraInicio),
-            Turno.convertirFechaStringADate(fechaHoraFin),
-            profesorPresente
-        );
+        return new Promise((resolve, reject) => {
+            try {
+                let tur = new Turno(
+                    500,
+                    alumno_id,
+                    usuario_id,
+                    moment(fechaHoraInicio).toDate(),
+                    moment(fechaHoraFin).toDate(),
+                    profesorPresente
+                );
 
-        //console.log("contenedorturno crear:", tur)
+                //console.log("contenedorturno crear:", tur)
+                // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
+                let profesorDisponib = this.getTurnosProfesor({id_usuario: tur.usuario_id}).every(t => (tur.verificarCompatHoraria(t)))
+                let alumnoDisponib = this.getTurnosAlumno({id_alumno: tur.alumno_id}).every(t => (tur.verificarCompatHoraria(t)))
+                // console.log(this.getTurnosAlumno({id_alumno: tur.alumno_id}))
 
-        let disponib = true
 
-        // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
-        this.getTurnosProfesor({id_usuario: tur.usuario_id}).map(t => {
-
-            // chequeamos de que no haya turnos que se superpongan con el que estamos tratando de agendar
-            if (!(tur.verificarCompatHoraria(t))) {
-                disponib = false
+                if (profesorDisponib && alumnoDisponib) {
+                    if (alumno.cantMinutosClaseRestantes - duracionClase < 0) {
+                        resolve({
+                            success: false,
+                            value: {content:"El alumno no tiene suficente tiempo comprado"}
+                        })
+                    } else {
+                        Storebroker.crearTurno(tur).then(r => {
+                            alumno.usarClase(duracionClase)
+                            tur.id_turno = r
+                            this.turnos.push(tur)
+                            resolve({success: true})
+                        })
+                    }
+                } else {
+                    resolve({
+                        success: false,
+                        value: {content: "El alumno o el profesor ya cuentan con un turno en ese horario"}
+                    })
+                }
+            } catch (e) {
+                console.log(e)
+                reject(e)
             }
         })
-
-        if (disponib) {
-
-            if ((alumno.cantClasesRestantes - 1) < 0) {
-                return false
-
-            } else if (alumno.cantMinutosClaseRestantes - duracionClase < 0) {
-                return false
-
-            } else {
-                Storebroker.crearTurno(tur).then(r => {
-                    alumno.usarClase(duracionClase)
-                    tur.id_turno = r
-                    this.turnos.push(tur)
-                    // console.log(tur.id_turno)
-                })
-                return true
-
-            }
-
-        } else {
-            return false
-        }
     }
 
 
     editarTurno(turno) {
 
-        console.log("contenedorturno editar:", turno)
+        let oldTurno = this.turnos.find(t => turno.id_turno === t.id_turno)
+        Object.keys(oldTurno).map(k => {
+            if (typeof turno[k] === 'undefined') {
+                turno[k] = oldTurno[k]
+            } else {
+                turno[k] = turno[k]
+            }
+        })
+
         Storebroker.editarTurno(turno)
 
         let editadoConExito = false
         this.turnos = this.turnos.map(t => {
             if (t.id_turno === turno.id_turno) {
                 editadoConExito = true
-                return turno
+                return new Turno(turno.id_turno,
+                    turno.alumno_id,
+                    turno.usuario_id,
+                    moment.utc(turno.fechaHoraInicio).toDate(),
+                    moment.utc(turno.fechaHoraFin).toDate(),
+                    turno.profesorPresente)
             } else {
                 return t
             }
@@ -150,26 +159,18 @@ class ContenedorTurno {
          */
 
         // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
+        let reservaTurnoInicio = moment(turno.fechaHoraInicio).toDate()
 
         // recibimos la fecha y la hora del 'presente', 'ahora', 'en este preciso instante'
-        let datetimeAhora = new Date();
+        let datetimeAhora = moment().toDate();
         // le restamos 1 al indice del mes porque cuando se convierte Date -> string, se suma 1 al indice; lo tenemos que volver a restar
-        datetimeAhora.setUTCMonth(datetimeAhora.getUTCMonth()-1)
-        console.log("datetimeahora:", datetimeAhora)
-        console.log("reservaturnoinicio:", reservaTurnoInicio)
+        // datetimeAhora.setUTCMonth(datetimeAhora.getUTCMonth() - 1)
+        // console.log("datetimeahora:", datetimeAhora)
+        // console.log("reservaturnoinicio:", reservaTurnoInicio)
 
-        if (datetimeAhora.getYear() <= reservaTurnoInicio.getYear() &&
-            datetimeAhora.getMonth() <= reservaTurnoInicio.getMonth()) {
+        let tiempoHastaInicio = (reservaTurnoInicio.getTime() - datetimeAhora.getTime()) / 86400000
+        return (tiempoHastaInicio >= 1)
 
-            if ((reservaTurnoInicio.getDate() - datetimeAhora.getDate()) >= 1) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return false;
     }
 
 
@@ -224,7 +225,6 @@ class ContenedorTurno {
                 )
 
 
-
                 // console.log("---")
                 // console.log(pDispHoraInicio.getHours().toString(),pDispHoraInicio.getMinutes().toString())
                 // console.log(tHoraInicio.getHours().toString(),tHoraInicio.getMinutes().toString())
@@ -265,7 +265,6 @@ class ContenedorTurno {
     }
 
 
-
 }
 
 
@@ -290,94 +289,53 @@ class Turno {
 
     verificarCompatHoraria(turno) {
 
-        // si tienen el mismo `datetime`, entonces no se puede reservar el turno
-        if (this.fechaHoraInicio.getTime() === turno.fechaHoraInicio.getTime()) {
-            return false;
+        const inBetween = (time) => {
+            return (this.fechaHoraInicio.getTime() < time && this.fechaHoraFin.getTime() > time)
         }
 
-        // si el primer turno termina luego de que el segundo inicia
-        else if (this.fechaHoraFin.getTime() < turno.fechaHoraFin.getTime() &&
-                 this.fechaHoraFin.getTime() > turno.fechaHoraInicio.getTime()) {
-            return false;
-
-        } else {
-            return true;
+        const same = (time1, time2) => {
+            return (this.fechaHoraInicio.getTime() === time1 && this.fechaHoraFin.getTime() === time2)
         }
+
+        console.log(
+            "fi",this.fechaHoraInicio, turno.fechaHoraInicio ,this.fechaHoraFin,
+            "ff", this.fechaHoraInicio, turno.fechaHoraFin ,this.fechaHoraFin,
+            inBetween(turno.fechaHoraInicio.getTime()),
+            inBetween(turno.fechaHoraFin.getTime()),
+            same(turno.fechaHoraInicio.getTime(), turno.fechaHoraFin.getTime())
+        )
+
+        return !(
+            inBetween(turno.fechaHoraInicio.getTime()) ||
+            inBetween(turno.fechaHoraFin.getTime()) ||
+            same(turno.fechaHoraInicio.getTime(), turno.fechaHoraFin.getTime())
+        )
 
     }
 
 
-    verificarPoliticaCancel(turno) {
+    // verificarPoliticaCancel(turno) {
 
         /* Primero construimos los objetos Date
         * asi podemos acceder a la funcionalidad de comparacion
          */
 
-        let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
-        let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
+        //CHECK: No se usa?
 
-        if (reservaThisTurnoInicio.getYear() === reservaTurnoInicio.getYear() &&
-            reservaThisTurnoInicio.getMonth() === reservaTurnoInicio.getMonth()) {
+        // let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
+        // let reservaThisTurnoInicio = Turno.convertirFechaStringADate(this.fechaHoraInicio)
+        //
+        // if (reservaThisTurnoInicio.getYear() === reservaTurnoInicio.getYear() &&
+        //     reservaThisTurnoInicio.getMonth() === reservaTurnoInicio.getMonth()) {
+        //
+        //     if ((reservaThisTurnoInicio.getDay() - reservaTurnoInicio.getDay()) >= 1) {
+        //         return true;
+        //     }
+        //
+        //     return false;
+        // }
+    // }
 
-            if ((reservaThisTurnoInicio.getDay() - reservaTurnoInicio.getDay()) >= 1) {
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-
-    static convertirFechaStringADate(fechaHoraString) {
-
-        // en caso de que el objeto ya sea de tipo Date, lo devolvemos, no hay necesidad de convertirlo
-        if (typeof(fechaHoraString) === Object) {
-            return fechaHoraString
-
-        } else if (fechaHoraString.includes(" ")) {
-
-            // separamos el string "YY-MM-dd HH:mm:ss" en dos por el espacio
-            let datetimeTurno = fechaHoraString.split(' ')
-            // agarramos la parte 'date' que seria YY-MM-dd
-            let dateTurno = datetimeTurno[0]
-            // agarramos la parte 'time' que seria HH:mm:ss
-            let timeTurno = datetimeTurno[1]
-
-            // construimos el objeto de Date forzando la conversion a Number
-            // el -3 es para pasar el horario a GMT-3
-            // el -1 es porque para Javascript, los indices de los meses empiezan en 0
-            return new Date(Number(dateTurno.split('-')[0]),
-                            Number(dateTurno.split('-')[1])-1,
-                            Number(dateTurno.split('-')[2]),
-                            Number(timeTurno.split(':')[0])-3,
-                            Number(timeTurno.split(':')[1]),
-            0)
-
-        } else if (fechaHoraString.includes("T")) {
-
-            // separamos el string "YY-MM-ddTHH:mm:ss" en dos por la T
-            let datetimeTurno = fechaHoraString.split('T')
-            // agarramos la parte 'date' que seria YY-MM-dd
-            let dateTurno = datetimeTurno[0]
-            // agarramos la parte 'time' que seria HH:mm:ss
-            let timeTurno = datetimeTurno[1]
-
-            // construimos el objeto de Date forzando la conversion a Number
-            // el -3 es para pasar el horario a GMT-3
-            // el -1 es porque para Javascript, los indices de los meses empiezan en 0
-            return new Date(Number(dateTurno.split('-')[0]),
-                            Number(dateTurno.split('-')[1])-1,
-                            Number(dateTurno.split('-')[2]),
-                            Number(timeTurno.split(':')[0])-3,
-                            Number(timeTurno.split(':')[1]),
-            0)
-
-        } else {
-            // si fechaHoraString no contiene un espacio o una 'T' probablemente no sea un String, sino un Date
-            return fechaHoraString
-        }
-
-    }
 }
 
 
@@ -407,7 +365,6 @@ class Turno {
 //     // console.log(ct)
 //     // console.log(ct.tieneTurnosRestantes({id_alumno: 2}))
 // })
-
 
 
 module.exports = {Turno, ContenedorTurno: ContenedorTurno}

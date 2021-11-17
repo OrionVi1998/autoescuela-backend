@@ -73,10 +73,26 @@ class ContenedorPaquete {
 
     editarPaquete(paquete) {
 
+        let oldPaquete = this.paquetes.find(p => paquete.id_paquete === p.id_paquete)
+        Object.keys(oldPaquete).map(k => {
+            if (typeof paquete[k] === 'undefined') {
+                paquete[k] = oldPaquete[k]
+            } else {
+                paquete[k] = paquete[k]
+            }
+        })
+
         Storebroker.editarPaquete(paquete)
         this.paquetes = this.paquetes.map(p => {
                 if (p.id_paquete === paquete.id_paquete) {
-                    return paquete
+                    return new Paquete(
+                        paquete.id_paquete,
+                        paquete.nombre,
+                        paquete.cantClases,
+                        paquete.durClases,
+                        paquete.precio,
+                        paquete.estado
+                    )
                 } else {
                     return p
                 }
