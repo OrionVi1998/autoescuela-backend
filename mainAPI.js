@@ -221,17 +221,41 @@ api.post(`/editarTurno/`, (req, res) => {
             let tur = contenedorTurno.turnos.find(t => req.body.id_turno === t.id_turno)
             let turnosCheck = contenedorTurno.getTurnos().filter(t => t.id_turno !== tur.id_turno)
 
+            let minutosOriginales = (moment(tur.fechaHoraFin).toDate().getTime() - moment(tur.fechaHoraInicio).toDate().getTime()) / 60000
+            let diffTurnos = duracionClase - minutosOriginales
+
+            if (diffTurnos < 0) {
+                alumno.devolverClase(Math.abs(diffTurnos))
+            } else if (diffTurnos > 0 && alumno.cantMinutosClaseRestantes >= Math.abs(diffTurnos)) {
+                alumno.usarClase(Math.abs(diffTurnos))
+            } else if (alumno.cantMinutosClaseRestantes < Math.abs(diffTurnos)) {
+                res.send({
+                    success: false,
+                    value: {content: "El alumno no tiene tiempo suficiente para esta clase"}
+                })
+                return;
+            }
+
             let profesorDisponib = turnosCheck.filter(t => t.usuario_id === profesor.id_usuario).every(t => (tur.verificarCompatHoraria(t)))
             let alumnoDisponib = turnosCheck.filter(t => t.alumno_id === alumno.id_alumno).every(t => (tur.verificarCompatHoraria(t)))
 
             if (profesorDisponib && alumnoDisponib) {
                 let editarTurno = contenedorTurno.editarTurno(req.body)
-                res.send(editarTurno)
+                res.send({
+                    success: true,
+                    value: {content: ""}
+                })
             } else {
-                res.send(false)
+                res.send({
+                    success: false,
+                    value: {content: "El profesor o alumno no se encuentra disponible"}
+                })
             }
         } else {
-            res.send(false)
+            res.send({
+                success: false,
+                value: {content: "El profesor no atiende en esa hora"}
+            })
         }
     } catch (e) {
         console.log(e)
@@ -244,7 +268,8 @@ api.delete("/eliminarTurno/", (req, res) => {
     try {
         console.log("ELIMINAR TURNO:", req.query.id_turno)
         let alum = contenedorAlumno.getAlumno({id_alumno: Number(req.query.alumno_id)});
-        let duracionClase = (moment(req.body.fechaHoraFin).toDate().getTime() - moment(req.body.fechaHoraInicio).toDate().getTime()) / 60000
+        let duracionClase = (moment(req.query.fechaHoraFin).toDate().getTime() - moment(req.query.fechaHoraInicio).toDate().getTime()) / 60000
+        console.log(duracionClase)
         alum.devolverClase(duracionClase)
         res.send(contenedorTurno.eliminarTurno(req.query))
     } catch (e) {
