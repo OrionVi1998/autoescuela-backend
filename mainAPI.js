@@ -306,26 +306,33 @@ api.post("/editarAlumno/", (req, res) => {
 
 api.get("/eliminarCheckAlumno/", (req, res) => {
 
-
+    // Check si el alumno puede ser eliminado
     try {
         let alumno = JSON.parse(req.query.alumno)
-        //Check cuando el alumno puede ser eliminado
 
-        //No tenga pagos pendientes
-        let pagosPendientes = contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0).length === 0
-        //No tenga clases pendientes
-        let alumnoClasesTiempRestantes = alumno.cantMinutosClaseRestantes === 0 //TODO: Decide for one
-        //TODO:
-        //No tenga clases futuras
-        let tieneClasesFuturas;
+        // console.log("eliminar alumno id:", alumno.id_alumno)
+        let esPosibleEliminar = true
 
-        console.log(`CHECK ELIMINAR ALUMNO - ${alumno.id_alumno} - ${pagosPendientes.length}&${alumno.cantClasesRestantes}`)
-        if (pagosPendientes && alumnoClasesTiempRestantes) {
-            res.send(true)
-        } else {
-            res.send(false)
+        if (contenedorPagos.getPagosAlumno(alumno).filter(p => p.pagado === 0).length > 0) {
+            esPosibleEliminar = false
         }
 
+        // chequeamos que el alumno no tenga tiempo restante de clases
+        if (alumno.cantMinutosClaseRestantes > 0) {
+            esPosibleEliminar = false
+        }
+
+        // chequeamos que el alumno no tenga clases pendientes
+        let arrayTurnosAlumno = contenedorTurno.getTurnosAlumno(alumno)
+        let fechaAhora = new Date()
+        arrayTurnosAlumno.map(tur => {
+            if (tur.fechaHoraInicio.getTime() > fechaAhora.getTime()) {
+                esPosibleEliminar = false
+            }
+        })
+
+        // console.log("eliminar alumno id:", alumno.id_alumno, "esPosibleEliminar:", esPosibleEliminar)
+        res.send(esPosibleEliminar)
 
     } catch (e) {
         console.log(e)
@@ -354,9 +361,12 @@ api.delete("/eliminarAlumno/", (req, res) => {
 
 
     try {
+
         console.log(`ELIMINAR ALUMNO - ${req.query.id_alumno}`)
         contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)});
+
         contenedorTurno.eliminarTurnosAlumno({id_alumno: Number(req.query.id_alumno)});
+        contenedorAlumno.eliminarAlumno({id_alumno: Number(req.query.id_alumno)});
         res.send(true)
     } catch (e) {
         console.log(e)

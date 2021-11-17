@@ -19,6 +19,7 @@ class ContenedorTurno {
             let async_result = await Storebroker.getTurnos()
             async_result = async_result.map(t => {
 
+
                 return new Turno(
                     t.ID_TURNO,
                     t.ALUMNO_ID,
@@ -318,6 +319,7 @@ class Turno {
         /* Primero construimos los objetos Date
         * asi podemos acceder a la funcionalidad de comparacion
          */
+
         //CHECK: No se usa?
 
         // let reservaTurnoInicio = Turno.convertirFechaStringADate(turno.fechaHoraInicio)
@@ -333,6 +335,7 @@ class Turno {
         //     return false;
         // }
     // }
+
 }
 
 
