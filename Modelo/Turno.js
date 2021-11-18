@@ -76,7 +76,7 @@ class ContenedorTurno {
                     if (alumno.cantMinutosClaseRestantes - duracionClase < 0) {
                         resolve({
                             success: false,
-                            value: {content:"El alumno no tiene suficente tiempo comprado"}
+                            value: {content: "El alumno no tiene suficente tiempo comprado"}
                         })
                     } else {
                         Storebroker.crearTurno(tur).then(r => {
@@ -100,35 +100,43 @@ class ContenedorTurno {
     }
 
 
-    editarTurno(turno) {
+    async editarTurno(turno) {
 
-        let oldTurno = this.turnos.find(t => turno.id_turno === t.id_turno)
-        Object.keys(oldTurno).map(k => {
-            if (typeof turno[k] === 'undefined') {
-                turno[k] = oldTurno[k]
-            } else {
-                turno[k] = turno[k]
+
+        return new Promise((resolve, reject) => {
+            try {
+                let oldTurno = this.turnos.find(t => turno.id_turno === t.id_turno)
+                Object.keys(oldTurno).map(k => {
+                    if (typeof turno[k] === 'undefined') {
+                        turno[k] = oldTurno[k]
+                    } else {
+                        turno[k] = turno[k]
+                    }
+                })
+
+                Storebroker.editarTurno(turno).then(id => {
+                    let editadoConExito = false
+                    this.turnos = this.turnos.map(t => {
+                        if (t.id_turno === turno.id_turno) {
+                            editadoConExito = true
+                            return new Turno(turno.id_turno,
+                                turno.alumno_id,
+                                turno.usuario_id,
+                                moment.utc(turno.fechaHoraInicio).toDate(),
+                                moment.utc(turno.fechaHoraFin).toDate(),
+                                turno.profesorPresente)
+                        } else {
+                            return t
+                        }
+                    });
+
+                    resolve(editadoConExito)
+                })
+            } catch (e) {
+                reject(e)
             }
         })
 
-        Storebroker.editarTurno(turno)
-
-        let editadoConExito = false
-        this.turnos = this.turnos.map(t => {
-            if (t.id_turno === turno.id_turno) {
-                editadoConExito = true
-                return new Turno(turno.id_turno,
-                    turno.alumno_id,
-                    turno.usuario_id,
-                    moment.utc(turno.fechaHoraInicio).toDate(),
-                    moment.utc(turno.fechaHoraFin).toDate(),
-                    turno.profesorPresente)
-            } else {
-                return t
-            }
-        });
-
-        return editadoConExito
     }
 
 
@@ -188,10 +196,12 @@ class ContenedorTurno {
     }
 
 
-    desvincularTrunosIncompatProfesor(profesor) {
+    async desvincularTrunosIncompatProfesor(profesor) {
 
-        this.turnos.map(t => {
-            if (t.usuario_id === profesor.id_usuario) {
+        await Promise.all(
+            this.turnos.filter(t => t.usuario_id === profesor.id_usuario).map(t => {
+
+                console.log(profesor)
 
                 let tHoraInicio = new Date()
                 tHoraInicio.setHours(
@@ -224,28 +234,19 @@ class ContenedorTurno {
                     0
                 )
 
-
-                // console.log("---")
-                // console.log(pDispHoraInicio.getHours().toString(),pDispHoraInicio.getMinutes().toString())
-                // console.log(tHoraInicio.getHours().toString(),tHoraInicio.getMinutes().toString())
-                // console.log(pDispHoraInicio > tHoraInicio)
-                //
-                // console.log(pDispHoraFin.getHours().toString(),pDispHoraFin.getMinutes().toString())
-                // console.log(tHoraFin.getHours().toString(),tHoraFin.getMinutes().toString())
-                // console.log(pDispHoraFin < tHoraFin)
-                // console.log("---")
-
-                if (pDispHoraInicio > tHoraInicio || pDispHoraFin < tHoraFin) {
-
+                if (pDispHoraInicio.getTime() <= tHoraInicio.getTime()) { //
+                    if (pDispHoraFin.getTime() < tHoraFin.getTime()) {
+                        console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
+                        t.usuario_id = null
+                        return this.editarTurno(t)
+                    }
+                } else {
                     console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
-
                     t.usuario_id = null
-                    this.editarTurno(t)
-
+                    return this.editarTurno(t)
                 }
-            }
-        })
-
+            })
+        )
     }
 
 

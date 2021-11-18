@@ -232,6 +232,15 @@ api.post(`/editarTurno/`, (req, res) => {
         }
 
         let profesor = contenedorProfesor.getProfesor({id_usuario: req.body.usuario_id});
+
+        if (typeof profesor === "undefined") {
+            res.send({
+                success: false,
+                value: {content: "Falta asignar un profesor"}
+            })
+            return;
+        }
+
         let alumno = contenedorAlumno.getAlumno({id_alumno: req.body.alumno_id})
         if (profesor.verificarDispHoraria(moment(req.body.fechaHoraInicio).toDate(), duracionClase)) {
 
@@ -263,10 +272,11 @@ api.post(`/editarTurno/`, (req, res) => {
             let alumnoDisponib = turnosCheck.filter(t => t.alumno_id === alumno.id_alumno).every(t => (tur.verificarCompatHoraria(t)))
 
             if (profesorDisponib && alumnoDisponib) {
-                let editarTurno = contenedorTurno.editarTurno(req.body)
-                res.send({
-                    success: true,
-                    value: {content: ""}
+                contenedorTurno.editarTurno(req.body).then(() => {
+                    res.send({
+                        success: true,
+                        value: {content: ""}
+                    })
                 })
             } else {
                 res.send({
@@ -446,11 +456,12 @@ api.put("/crearProfesor", (req, res) => {
 })
 
 api.post("/editarProfesor", (req, res) => {
-    console.log(`EDITAR PROFESOR - ${req.body.id_usuario}`)
 
     try {
-        contenedorTurno.desvincularTrunosIncompatProfesor(req.body)
-        contenedorProfesor.editarProfesor(req.body)
+        console.log(`EDITAR PROFESOR - ${req.body.id_usuario}`)
+        contenedorTurno.desvincularTrunosIncompatProfesor(req.body).then(r =>
+            contenedorProfesor.editarProfesor(req.body)
+        )
         res.send(true)
     } catch (e) {
         console.log(e)
