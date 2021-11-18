@@ -162,7 +162,7 @@ class Profesor extends Usuario {
             Number(horaFin[1]),
             0]).toDate()
 
-        // console.log(moment(profHoraInicio).toDate(), moment(profHoraFin).toDate(), turnoFechaInicio)
+        console.log(moment(profHoraInicio).toDate(), moment(profHoraFin).toDate(), turnoFechaInicio)
 
         if (profHoraInicio <= turnoFechaInicio.getTime()) { //
             return profHoraFin >= (turnoFechaInicio.getTime() + (duracionClase * 60000))

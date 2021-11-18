@@ -248,6 +248,8 @@ class ContenedorTurno {
                     Number(profesor.horaFin.split(":")[1]),
                     0]).toDate()
 
+                console.log(pDispHoraInicio, pDispHoraFin, tHoraInicio, tHoraFin)
+
                 if (pDispHoraInicio.getTime() <= tHoraInicio.getTime()) { //
                     if (pDispHoraFin.getTime() < tHoraFin.getTime()) {
                         console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
