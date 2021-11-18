@@ -218,21 +218,35 @@ class ContenedorTurno {
                     0
                 )
 
-                let pDispHoraInicio = profesor.horaInicio.split(":")
-                let pDispHoraFin = profesor.horaFin.split(":")
+                // let pDispHoraInicio = profesor.horaInicio.split(":")
+                // let pDispHoraFin = profesor.horaFin.split(":")
+                //
+                // pDispHoraInicio = new Date()
+                // pDispHoraInicio.setHours(
+                //     Number(profesor.horaInicio.split(":")[0]),
+                //     Number(profesor.horaInicio.split(":")[1]),
+                //     0
+                // )
+                // pDispHoraFin = new Date()
+                // pDispHoraFin.setHours(
+                //     Number(profesor.horaFin.split(":")[0]),
+                //     Number(profesor.horaFin.split(":")[1]),
+                //     0
+                // )
 
-                pDispHoraInicio = new Date()
-                pDispHoraInicio.setHours(
-                    Number(profesor.horaInicio.split(":")[0]) + 3,
+                let pDispHoraInicio = moment.utc([new Date().getFullYear(),
+                    new Date().getMonth(),
+                    new Date().getDate(),
+                    Number(profesor.horaInicio.split(":")[0]),
                     Number(profesor.horaInicio.split(":")[1]),
-                    0
-                )
-                pDispHoraFin = new Date()
-                pDispHoraFin.setHours(
-                    Number(profesor.horaFin.split(":")[0]) + 3,
+                    0]).toDate()
+
+                let pDispHoraFin = moment.utc([new Date().getFullYear(),
+                    new Date().getMonth(),
+                    new Date().getDate(),
+                    Number(profesor.horaFin.split(":")[0]),
                     Number(profesor.horaFin.split(":")[1]),
-                    0
-                )
+                    0]).toDate()
 
                 if (pDispHoraInicio.getTime() <= tHoraInicio.getTime()) { //
                     if (pDispHoraFin.getTime() < tHoraFin.getTime()) {
