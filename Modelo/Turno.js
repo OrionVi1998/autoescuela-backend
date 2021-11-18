@@ -223,13 +223,13 @@ class ContenedorTurno {
 
                 pDispHoraInicio = new Date()
                 pDispHoraInicio.setHours(
-                    Number(profesor.horaInicio.split(":")[0]),
+                    Number(profesor.horaInicio.split(":")[0]) + 3,
                     Number(profesor.horaInicio.split(":")[1]),
                     0
                 )
                 pDispHoraFin = new Date()
                 pDispHoraFin.setHours(
-                    Number(profesor.horaFin.split(":")[0]),
+                    Number(profesor.horaFin.split(":")[0]) + 3,
                     Number(profesor.horaFin.split(":")[1]),
                     0
                 )
