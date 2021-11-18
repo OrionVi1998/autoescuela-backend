@@ -1,6 +1,7 @@
 // let config = require('./config.json');
 
 const mariadb = require("mariadb");
+const moment = require("moment");
 
 
 config = {
@@ -333,7 +334,7 @@ class Storebroker {
             console.log("storebroker crear:", turno)
             conn = await pool.getConnection();
             const rows = await conn.query("INSERT INTO turnos (ALUMNO_ID, USUARIO_ID, fechaHoraInicio, fechaHoraFin, profesorPresente) VALUES (?, ?, ?, ?, ?)",
-                                          [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio.toISOString().replace('T', ' ').substr(0, 19), turno.fechaHoraFin.toISOString().replace('T', ' ').substr(0, 19), turno.profesorPresente]);
+                                          [turno.alumno_id, turno.usuario_id, moment.utc(turno.fechaHoraInicio).toISOString().replace('T', ' ').substr(0, 19), moment.utc(turno.fechaHoraFin).toISOString().replace('T', ' ').substr(0, 19), turno.profesorPresente]);
 
             let last_id = await conn.query("SELECT LAST_INSERT_ID()");
             // console.log(last_id)
@@ -352,9 +353,8 @@ class Storebroker {
         try {
             conn = await pool.getConnection();
             console.log("storebroker editar:", turno)
-            console.log("toISOString:", turno.fechaHoraInicio.replace('T', ' ').substr(0, 19))
             const rows = await conn.query("UPDATE turnos SET ALUMNO_ID=?, USUARIO_ID=?, fechaHoraInicio=?, fechaHoraFin=?, profesorPresente=? WHERE ID_TURNO=?",
-                                          [turno.alumno_id, turno.usuario_id, turno.fechaHoraInicio.replace('T', ' ').substr(0, 19), turno.fechaHoraFin.replace('T', ' ').substr(0, 19), turno.profesorPresente, turno.id_turno]);
+                                          [turno.alumno_id, turno.usuario_id, moment.utc(turno.fechaHoraInicio).toISOString().replace('T', ' ').substr(0, 19), moment.utc(turno.fechaHoraFin).toISOString().replace('T', ' ').substr(0, 19), turno.profesorPresente, turno.id_turno]);
             console.log(rows); // TODO
 
         } catch (err) {
