@@ -251,7 +251,7 @@ class ContenedorTurno {
                 console.log(pDispHoraInicio, pDispHoraFin, tHoraInicio, tHoraFin)
 
                 if (pDispHoraInicio.getTime() <= tHoraInicio.getTime()) { //
-                    if (pDispHoraFin.getTime() >= tHoraFin.getTime()) {
+                    if (pDispHoraFin.getTime() < tHoraFin.getTime()) {
                         console.log(`DESV. TURNO ${t.id_turno} de profesor ${profesor.usuario_id}`)
                         t.usuario_id = null
                         return this.editarTurno(t)
