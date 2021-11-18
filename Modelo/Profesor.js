@@ -140,25 +140,35 @@ class Profesor extends Usuario {
     // Retorna True si puede tener turno en esta hora
     verificarDispHoraria(turnoFechaInicio, duracionClase) {
 
+        console.log(this.horaInicio, this.horaFin)
         // la hora del profesor esta en formato time HH:mm:ss
         let horaInicio = this.horaInicio.split(":")
         let horaFin = this.horaFin.split(":")
 
+
         // convertimos las fechas en mainAPI
 
-        let profHoraInicio = new Date(turnoFechaInicio.getFullYear(),
-                                      turnoFechaInicio.getMonth(),
-                                      turnoFechaInicio.getDate(),
-                                      Number(horaInicio[0]),
-                                      Number(horaInicio[1]),
-                                      0)
+        let profHoraInicio = moment.utc([turnoFechaInicio.getFullYear(),
+            turnoFechaInicio.getMonth(),
+            turnoFechaInicio.getDate(),
+            Number(horaInicio[0]),
+            Number(horaInicio[1]),
+            0]).toDate()
 
-        let profHoraFin = new Date(turnoFechaInicio.getFullYear(),
-                                   turnoFechaInicio.getMonth(),
-                                   turnoFechaInicio.getDate(),
-                                   Number(horaFin[0]),
-                                   Number(horaFin[1]),
-                                   0)
+        let profHoraFin = moment.utc([turnoFechaInicio.getFullYear(),
+            turnoFechaInicio.getMonth(),
+            turnoFechaInicio.getDate(),
+            Number(horaFin[0]),
+            Number(horaFin[1]),
+            0]).toDate()
+
+        // console.log(moment(profHoraInicio).toDate(), moment(profHoraFin).toDate(), turnoFechaInicio)
+
+        if (profHoraInicio <= turnoFechaInicio.getTime()) { //
+            return profHoraFin >= (turnoFechaInicio.getTime() + (duracionClase * 60000))
+        } else {
+            return false
+        }
 
         return (profHoraInicio.getTime() <= turnoFechaInicio.getTime() && (turnoFechaInicio.getTime() + (duracionClase * 60000)) <= profHoraFin.getTime());
     }
